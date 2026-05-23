@@ -1,5 +1,6 @@
 // ── Polling ───────────────────────────────────────────────────────────────
 let activeFieldKey = null;
+const dirtyFields = new Set(); // fields edited but not yet saved
 
 document.addEventListener('focusin', e => {
   const el = e.target;
@@ -12,6 +13,14 @@ document.addEventListener('focusout', () => {
   activeFieldKey = null;
 });
 
+// Mark a field dirty as soon as the user starts typing
+document.addEventListener('input', e => {
+  const el = e.target;
+  if ((el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') && el.dataset.field) {
+    dirtyFields.add(el.dataset.field);
+  }
+});
+
 async function pollData() {
   try {
     const resp = await fetch('/api/data');
@@ -21,7 +30,7 @@ async function pollData() {
     // Update all plain [data-field] elements not currently focused
     document.querySelectorAll('[data-field]').forEach(el => {
       const key = el.dataset.field;
-      if (key === activeFieldKey) return;
+      if (key === activeFieldKey || dirtyFields.has(key)) return;
       if (data[key] === undefined || data[key] === null) return;
       if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
         if (el.value !== String(data[key])) {
@@ -61,6 +70,7 @@ async function saveFields(fields, btn) {
       body: JSON.stringify(fields),
     });
     if (resp.ok) {
+      Object.keys(fields).forEach(k => dirtyFields.delete(k));
       flashSaved(btn);
     }
   } catch (e) {
