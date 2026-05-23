@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Раунд 5 · Риски{% endblock %}
+
+{% block content %}
+<div class="page-title">Раунд 5 · Риски</div>
+<div class="page-subtitle">Ведущий вводит номер риска — все участники видят его текст.</div>
+
+<div class="card accent-r5">
+  <div class="card-title">Выбор риска</div>
+  <div class="card-desc">Введите номер от 1 до 8 и нажмите «Показать риск».</div>
+
+  <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+    <div>
+      <label class="field-label">Риск №</label>
+      <input type="number" id="risk-input" data-field="r5_risk"
+             min="1" max="8" style="width:100px;"
+             value="{{ data.get('r5_risk', '') }}"
+             placeholder="1–8">
+    </div>
+    <div style="margin-top:18px;">
+      <button class="btn btn-primary" onclick="confirmRisk(this)">
+        Показать риск
+      </button>
+    </div>
+  </div>
+
+  <div id="risk-display" {% if not risk %}style="display:none"{% endif %}>
+    <div class="risk-card">
+      <div class="risk-title" id="risk-title">
+        {% if risk %}{{ risk[0] }}{% endif %}
+      </div>
+      <div class="risk-text" id="risk-text">
+        {% if risk %}{{ risk[1] }}{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const RISKS = {{ risks_json | tojson }};
+
+async function confirmRisk(btn) {
+  const val = parseInt(document.getElementById('risk-input').value);
+  if (!val || val < 1 || val > 8) {
+    alert('Введите число от 1 до 8');
+    return;
+  }
+  await saveField('r5_risk', val, btn);
+  showRisk(val);
+}
+
+function showRisk(num) {
+  const r = RISKS[String(num)];
+  if (!r) return;
+  document.getElementById('risk-title').textContent = r.title;
+  document.getElementById('risk-text').textContent  = r.text;
+  document.getElementById('risk-display').style.display = 'block';
+}
+
+window.onPollUpdate = function(data) {
+  if (data.r5_risk) {
+    const input = document.getElementById('risk-input');
+    if (document.activeElement !== input) {
+      input.value = data.r5_risk;
+    }
+    showRisk(data.r5_risk);
+  }
+};
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+.env
+.claude/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+*.sqlite
+instance/

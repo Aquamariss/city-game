@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Раунд 1 · Исследование{% endblock %}
+
+{% block content %}
+<div class="page-title">Раунд 1 · Исследование</div>
+<div class="page-subtitle">⏱ Время этапа — около 20 минут</div>
+
+{% set sections = [
+  ('r1_gen',  'Генераторы',        'badge-green',  'Генераторы создают идеи и смыслы',
+   'Идеи и смыслы'),
+  ('r1_prob', 'Проблематизаторы',  'badge-blue',   'Проблематизаторы находят проблемы и боли горожан',
+   'Проблемы и боли'),
+  ('r1_sol',  'Решатели',          'badge-purple',  'Решатели придумывают новые проекты и продукты',
+   'Решения, проекты и продукты'),
+  ('r1_mak',  'Делатели',          'badge-orange', 'Делатели находят технологии и ресурсы, чтобы выпустить продукт, реализовать проект',
+   'Что и как можно произвести'),
+  ('r1_exp',  'Экспортеры',        'badge-red',    'Экспортеры владеют информацией о том, какие проекты и продукты продаются на внешнем рынке — в других городах и странах',
+   'Экспортные услуги и товары'),
+] %}
+
+{% for key, name, badge_class, desc, placeholder in sections %}
+<div class="card accent-r1">
+  <div class="card-title">
+    <span class="badge {{ badge_class }}">{{ name }}</span>
+  </div>
+  <div class="card-desc">{{ desc }}</div>
+  <label class="field-label">{{ placeholder }}</label>
+  <textarea rows="8" data-field="{{ key }}"
+            id="field-{{ key }}"
+            placeholder="{{ placeholder }}...">{{ data.get(key, '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('{{ key }}', document.getElementById('field-{{ key }}').value, this)">
+      Записать
+    </button>
+    <span class="saved-msg" id="msg-{{ key }}"></span>
+  </div>
+</div>
+{% endfor %}
+
+<div class="divider"></div>
+
+<div style="display:flex; align-items:center; gap:16px;">
+  <button class="btn btn-primary" onclick="generateRound2(this)">
+    ▶ Сгенерировать общий результат
+  </button>
+  <span style="color:var(--muted); font-size:13px;">
+    Скопирует данные раунда в Раунд 2 и перейдёт туда
+  </span>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Городская игра{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h2>🏙 Городская игра</h2>
+    {% if game %}
+    <div class="game-name">{{ game.name }}</div>
+    {% endif %}
+  </div>
+
+  <nav>
+    <div class="nav-section">Игра</div>
+    <a href="{{ url_for('games') }}"
+       class="{% if request.endpoint == 'games' %}active{% endif %}">
+      📋 Список игр
+    </a>
+    <a href="{{ url_for('game_info') }}"
+       class="{% if request.endpoint == 'game_info' %}active{% endif %}">
+      📖 Игра — описание
+    </a>
+
+    {% if session.get('current_game_id') %}
+    <div class="nav-section">Раунды</div>
+    <a href="{{ url_for('round1') }}"
+       class="{% if request.endpoint == 'round1' %}active{% endif %}">
+      Раунд 1 · Исследование
+    </a>
+    <a href="{{ url_for('round2') }}"
+       class="{% if request.endpoint == 'round2' %}active{% endif %}">
+      Раунд 2 · Общий результат
+    </a>
+    <a href="{{ url_for('round3') }}"
+       class="{% if request.endpoint == 'round3' %}active{% endif %}">
+      Раунд 3 · ТЗ на изменения
+    </a>
+    <a href="{{ url_for('round4') }}"
+       class="{% if request.endpoint == 'round4' %}active{% endif %}">
+      Раунд 4 · Кооперация
+    </a>
+    <a href="{{ url_for('round5') }}"
+       class="{% if request.endpoint == 'round5' %}active{% endif %}">
+      Раунд 5 · Риски
+    </a>
+    <a href="{{ url_for('round6') }}"
+       class="{% if request.endpoint == 'round6' %}active{% endif %}">
+      Раунд 6 · Бизнес-модель
+    </a>
+    <a href="{{ url_for('round7') }}"
+       class="{% if request.endpoint == 'round7' %}active{% endif %}">
+      Раунд 7 · Итог
+    </a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="{{ url_for('logout') }}">Выйти</a>
+  </div>
+</aside>
+
+<main class="main">
+  {% block content %}{% endblock %}
+</main>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

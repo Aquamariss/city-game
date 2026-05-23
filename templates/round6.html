@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Раунд 6 · Бизнес-модель{% endblock %}
+
+{% block content %}
+<div class="page-title">Раунд 6 · Бизнес-модель проекта</div>
+<div class="page-subtitle">Заполняйте поля — все участники видят изменения при обновлении страницы.</div>
+
+{% set fields = [
+  ('r6_territory', 'Территория',    'Город, район?'),
+  ('r6_tz',        'ТЗ',            'Какую проблему решаем, что создаём?'),
+  ('r6_hypotheses','Гипотезы',      'Что предполагаем, что нужно проверять?'),
+  ('r6_coop',      'Кооперация',    'Кто что вкладывает, что получает?'),
+  ('r6_tech',      'Технология',    'Как делаем? Тиражируем технологию?'),
+  ('r6_export',    'Экспорт',       'Методология, технология, культура?'),
+  ('r6_pitch',     'Финальный питч','Мы решаем проблему А территории Б, путём создания С. Уникальность и преимущества заключаются в Д, экономика и устойчивость обеспечиваются за счёт Е.'),
+] %}
+
+{% for key, label, hint in fields %}
+<div class="card accent-r6">
+  <div class="card-title">{{ label }}</div>
+  <div class="card-desc">{{ hint }}</div>
+  <textarea rows="3" data-field="{{ key }}" id="field-{{ key }}"
+            placeholder="{{ hint }}">{{ data.get(key, '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('{{ key }}', document.getElementById('field-{{ key }}').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Раунд 7 · Итог{% endblock %}
+
+{% block content %}
+<div class="page-title">Раунд 7 · Завершение</div>
+<div class="page-subtitle">Вопросы для рефлексии по итогам игры.</div>
+
+<div class="card accent-r7">
+  <div class="card-title">1. Модератору</div>
+  <ul class="reflection-list" style="margin-top:12px;">
+    <li>Что получилось?</li>
+    <li>Что не удалось?</li>
+    <li>Что бы изменили в своей переговорной позиции?</li>
+  </ul>
+</div>
+
+<div class="card accent-r7">
+  <div class="card-title">2. Всем участникам</div>
+  <ul class="reflection-list" style="margin-top:12px;">
+    <li>Что было самым сложным в переговорах?</li>
+    <li>Кого «забыли» первым? Почему?</li>
+    <li>Что изменилось в вашем понимании городской экономики?</li>
+    <li>Где в реальной жизни вашего города нет этих процессов?</li>
+    <li>Что вы начнёте делать по-другому в своих проектах?</li>
+    <li>Какой процесс (генерация, проблематизация, решение, производство, экспорт) ваш город пропускает?</li>
+  </ul>
+</div>
+
+<div class="card" style="background:#f0fdf4; border-color:#86efac;">
+  <div class="card-title" style="color:#15803d;">🎉 Игра завершена</div>
+  <p style="margin-top:8px; color:#166534; font-size:14px;">
+    Результаты сохранены в базе данных. Вы можете вернуться к любому раунду или начать новую игру.
+  </p>
+  <div style="margin-top:16px; display:flex; gap:12px;">
+    <a href="{{ url_for('round6') }}" class="btn btn-outline btn-sm">← Раунд 6</a>
+    <form method="POST" action="{{ url_for('new_game') }}">
+      <button type="submit" class="btn btn-primary btn-sm">Новая игра</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

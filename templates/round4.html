@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Раунд 4 · Кооперация{% endblock %}
+
+{% block content %}
+<div class="page-title">Раунд 4 · Кооперация</div>
+<div class="page-subtitle">Каждая команда определяет, что готова дать и что хочет получить.</div>
+
+{% set sections = [
+  ('gen',  'Генераторы',       'badge-green'),
+  ('prob', 'Проблематизаторы', 'badge-blue'),
+  ('sol',  'Решатели',         'badge-purple'),
+  ('mak',  'Делатели',         'badge-orange'),
+  ('exp',  'Экспортеры',       'badge-red'),
+] %}
+
+{% for sec, sec_name, badge_class in sections %}
+{% set key_give = 'r4_' + sec + '_give' %}
+{% set key_want = 'r4_' + sec + '_want' %}
+<div class="card accent-r4">
+  <div class="card-title">
+    <span class="badge {{ badge_class }}">{{ sec_name }}</span>
+  </div>
+
+  <div class="field-group">
+    <label class="field-label">Что готовы дать?</label>
+    <textarea rows="3" data-field="{{ key_give }}" id="field-{{ key_give }}"
+              placeholder="Ресурсы, компетенции, связи...">{{ data.get(key_give, '') }}</textarea>
+  </div>
+
+  <div class="field-group">
+    <label class="field-label">Что хотите получить?</label>
+    <textarea rows="3" data-field="{{ key_want }}" id="field-{{ key_want }}"
+              placeholder="Чего не хватает команде...">{{ data.get(key_want, '') }}</textarea>
+  </div>
+
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveSection('{{ sec }}', this)">
+      Записать
+    </button>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function saveSection(sec, btn) {
+  const fields = {};
+  ['give','want'].forEach(f => {
+    const key = 'r4_' + sec + '_' + f;
+    const el = document.getElementById('field-' + key);
+    if (el) fields[key] = el.value;
+  });
+  await saveFields(fields, btn);
+}
+</script>
+{% endblock %}

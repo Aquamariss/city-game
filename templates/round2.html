@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Раунд 2 · Общий результат{% endblock %}
+
+{% block content %}
+<div class="page-title">Раунд 2 · Общий результат</div>
+<div class="page-subtitle">Поля заполнены из Раунда 1 — их можно редактировать. Один человек сохраняет общий результат.</div>
+
+<div class="card accent-r2">
+  <div class="card-title">Сводные данные команд</div>
+  <div class="card-desc">Отредактируйте при необходимости и нажмите «Записать».</div>
+
+  {% set fields = [
+    ('r2_meanings',  'Раунд 2 · Смыслы',   'Идеи и смыслы из Раунда 1'),
+    ('r2_problems',  'Раунд 2 · Проблемы',  'Проблемы и боли из Раунда 1'),
+    ('r2_solutions', 'Раунд 2 · Решения',   'Решения и проекты из Раунда 1'),
+    ('r2_deeds',     'Раунд 2 · Дела',      'Технологии и ресурсы из Раунда 1'),
+    ('r2_export',    'Раунд 2 · Экспорт',   'Экспортные услуги из Раунда 1'),
+  ] %}
+
+  {% for key, label, placeholder in fields %}
+  <div class="field-group">
+    <label class="field-label">{{ label }}</label>
+    <textarea rows="4" data-field="{{ key }}" id="field-{{ key }}"
+              placeholder="{{ placeholder }}">{{ data.get(key, '') }}</textarea>
+  </div>
+  {% endfor %}
+
+  <div class="save-row">
+    <button class="btn btn-primary" id="save-main-btn"
+            onclick="saveMainFields(this)">
+      Записать
+    </button>
+  </div>
+</div>
+
+<!-- Культурные коды -->
+<div class="card accent-r2">
+  <div class="card-title">Культурные коды территории</div>
+  <div class="card-desc">Какой этот город и его жители? В чём их идентичность? 5–7 вариантов.</div>
+
+  <div id="cultural-codes-list"></div>
+  <script type="application/json" id="cultural-codes-list-init">
+    {{ data.get('r2_cultural_codes', []) | tojson }}
+  </script>
+
+  <div class="save-row" style="margin-top:8px;">
+    <button class="btn btn-outline btn-sm" id="cultural-codes-list-add">
+      + Добавить вариант
+    </button>
+    <button class="btn btn-primary btn-sm" id="cultural-codes-list-save">
+      Записать список
+    </button>
+  </div>
+</div>
+
+<!-- Боли территории -->
+<div class="card accent-r2">
+  <div class="card-title">Боли территории</div>
+  <div class="card-desc">Основные боли и проблемы города, 5–7 вариантов.</div>
+
+  <div id="city-pains-list"></div>
+  <script type="application/json" id="city-pains-list-init">
+    {{ data.get('r2_city_pains', []) | tojson }}
+  </script>
+
+  <div class="save-row" style="margin-top:8px;">
+    <button class="btn btn-outline btn-sm" id="city-pains-list-add">
+      + Добавить вариант
+    </button>
+    <button class="btn btn-primary btn-sm" id="city-pains-list-save">
+      Записать список
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function saveMainFields(btn) {
+  const fields = {};
+  ['r2_meanings','r2_problems','r2_solutions','r2_deeds','r2_export'].forEach(key => {
+    const el = document.getElementById('field-' + key);
+    if (el) fields[key] = el.value;
+  });
+  await saveFields(fields, btn);
+}
+
+const ccList   = makeDynamicList('cultural-codes-list', 'r2_cultural_codes', 10);
+const painList = makeDynamicList('city-pains-list',     'r2_city_pains',     10);
+
+window.onPollUpdate = function(data) {
+  if (data.r2_cultural_codes && ccList)   ccList.update(data.r2_cultural_codes);
+  if (data.r2_city_pains     && painList) painList.update(data.r2_city_pains);
+};
+</script>
+{% endblock %}

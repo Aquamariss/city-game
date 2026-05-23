@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Список игр{% endblock %}
+
+{% block content %}
+<div class="page-title">📋 Сохранённые игры</div>
+<div class="page-subtitle">Хранится до 4 последних игр. Нажмите на игру, чтобы загрузить её данные.</div>
+
+{% if not games %}
+<div class="card">
+  <p style="color: var(--muted);">Нет сохранённых игр. Начните новую игру.</p>
+</div>
+{% endif %}
+
+{% for g in games %}
+<div class="game-item {% if g.id == current_game_id %}current{% endif %}">
+  <div>
+    <div class="game-item-name">
+      {{ g.name }}
+      {% if g.id == current_game_id %}
+      <span class="badge badge-blue" style="margin-left:8px;">активна</span>
+      {% endif %}
+    </div>
+    <div class="game-item-date">{{ g.created_at[:16].replace('T', ' ') }}</div>
+  </div>
+  {% if g.id != current_game_id %}
+  <a href="{{ url_for('load_game', game_id=g.id) }}" class="btn btn-outline btn-sm">
+    Загрузить
+  </a>
+  {% else %}
+  <a href="{{ url_for('round1') }}" class="btn btn-primary btn-sm">
+    Перейти к игре →
+  </a>
+  {% endif %}
+</div>
+{% endfor %}
+
+<div class="divider"></div>
+
+{% if request.args.get('error') == 'wrong_code' %}
+<div style="background:#fee2e2; color:#dc2626; border-radius:8px; padding:10px 16px; margin-bottom:16px; font-size:14px;">
+  Неверный код. Новая игра не создана.
+</div>
+{% endif %}
+
+<form method="POST" action="{{ url_for('new_game') }}">
+  <div style="display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap;">
+    <div>
+      <label class="field-label">Код для запуска</label>
+      <input type="password" name="admin_password"
+             placeholder="Введите код" style="width:180px;">
+    </div>
+    <button type="submit" class="btn btn-primary">
+      ➕ Начать новую игру
+    </button>
+  </div>
+</form>
+{% endblock %}
