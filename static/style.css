@@ -330,7 +330,7 @@ textarea:focus, input:focus {
 }
 
 .list-item .votes-input {
-  width: 72px;
+  width: 88px;
   flex-shrink: 0;
 }
 
