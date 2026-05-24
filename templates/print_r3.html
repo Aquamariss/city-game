@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Финальное ТЗ — {{ game.name }}</title>
+  <style>
+    body { font-family: 'Georgia', serif; margin: 2cm; color: #1a1a1a; line-height: 1.6; }
+    h1   { font-size: 20pt; margin-bottom: 4px; }
+    .meta { color: #666; font-size: 11pt; margin-bottom: 24px; }
+    .block { margin-bottom: 20px; border-top: 1.5px solid #ccc; padding-top: 12px; }
+    .label { font-size: 9pt; text-transform: uppercase; letter-spacing: 0.08em;
+             color: #555; font-family: sans-serif; margin-bottom: 4px; }
+    .value { font-size: 13pt; white-space: pre-wrap; }
+    .empty { color: #aaa; font-style: italic; }
+    @media print {
+      body { margin: 1.5cm; }
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<p class="no-print" style="font-family:sans-serif; font-size:13px; color:#555; margin-bottom:16px;">
+  <button onclick="window.print()"
+          style="padding:8px 18px; background:#3b82f6; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:14px;">
+    Скачать / Распечатать PDF
+  </button>
+  &nbsp;&nbsp;
+  <a href="javascript:history.back()" style="color:#555; text-decoration:none;">← Назад</a>
+</p>
+
+<h1>Финальное ТЗ</h1>
+<div class="meta">{{ game.name }}</div>
+
+{% set questions = [
+  ('r3_fin_q1', 'Какую проблему решаем?'),
+  ('r3_fin_q2', 'Для кого?'),
+  ('r3_fin_q3', 'С опорой на какие смыслы?'),
+  ('r3_fin_q4', 'Как поймём, что получилось?'),
+  ('r3_fin_q5', 'Ограничения?'),
+] %}
+
+{% for key, label in questions %}
+<div class="block">
+  <div class="label">{{ label }}</div>
+  {% if data.get(key) %}
+  <div class="value">{{ data[key] }}</div>
+  {% else %}
+  <div class="empty">не заполнено</div>
+  {% endif %}
+</div>
+{% endfor %}
+
+</body>
+</html>

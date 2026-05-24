@@ -2,8 +2,15 @@
 {% block title %}Раунд 6 · Бизнес-модель{% endblock %}
 
 {% block content %}
-<div class="page-title">Раунд 6 · Бизнес-модель проекта</div>
-<div class="page-subtitle">Заполняйте поля — все участники видят изменения при обновлении страницы.</div>
+<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:4px;">
+  <div>
+    <div class="page-title">Раунд 6 · Бизнес-модель проекта</div>
+    <div class="page-subtitle">Заполняйте поля — все участники видят изменения при обновлении страницы.</div>
+  </div>
+  <a href="{{ url_for('print_r6') }}" target="_blank" class="btn btn-outline btn-sm">
+    ⬇ Скачать PDF
+  </a>
+</div>
 
 {% set fields = [
   ('r6_territory', 'Территория',    'Город, район?'),

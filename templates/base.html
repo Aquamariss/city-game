@@ -8,7 +8,12 @@
 </head>
 <body>
 
-<aside class="sidebar">
+<button class="hamburger" id="hamburger" aria-label="Меню">
+  <span></span><span></span><span></span>
+</button>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <h2>🏙 Городская игра</h2>
     {% if game %}

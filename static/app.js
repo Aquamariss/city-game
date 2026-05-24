@@ -1,3 +1,26 @@
+// ── Mobile menu ──────────────────────────────────────────────────────────
+(function () {
+  const hamburger = document.getElementById('hamburger');
+  const sidebar   = document.getElementById('sidebar');
+  const overlay   = document.getElementById('sidebar-overlay');
+  if (!hamburger) return;
+
+  function openMenu()  { sidebar.classList.add('open');    overlay.classList.add('visible'); }
+  function closeMenu() { sidebar.classList.remove('open'); overlay.classList.remove('visible'); }
+
+  hamburger.addEventListener('click', () =>
+    sidebar.classList.contains('open') ? closeMenu() : openMenu()
+  );
+  overlay.addEventListener('click', closeMenu);
+
+  // Close when a nav link is tapped on mobile
+  sidebar.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeMenu();
+    })
+  );
+})();
+
 // ── Polling ───────────────────────────────────────────────────────────────
 let activeFieldKey = null;
 const dirtyFields = new Set(); // fields edited but not yet saved

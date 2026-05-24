@@ -23,6 +23,12 @@
 ] %}
 
 {% for sec, sec_name, badge_class in sections %}
+{% if sec == 'fin' %}
+<div style="display:flex; justify-content:flex-end; margin-bottom:4px;">
+  <a href="{{ url_for('print_r3_final') }}" target="_blank"
+     class="btn btn-outline btn-sm">⬇ Скачать PDF — Финальное ТЗ</a>
+</div>
+{% endif %}
 <div class="card accent-r3">
   <div class="card-title">
     <span class="badge {{ badge_class }}">{{ sec_name }}</span>

@@ -243,5 +243,21 @@ def _risks_json():
     return {str(k): {'title': v[0], 'text': v[1]} for k, v in RISKS.items()}
 
 
+@app.route('/print/r3-final')
+@game_required
+def print_r3_final():
+    game = get_current_game()
+    data = game.get('data', {})
+    return render_template('print_r3.html', game=game, data=data)
+
+
+@app.route('/print/r6')
+@game_required
+def print_r6():
+    game = get_current_game()
+    data = game.get('data', {})
+    return render_template('print_r6.html', game=game, data=data)
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
