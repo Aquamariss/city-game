@@ -16,12 +16,14 @@
 
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    {% if logo_exists %}
-    <img src="{{ url_for('static', filename='logo.png') }}"
-         alt="Логотип" style="width:100%; max-width:180px; margin-bottom:10px; display:block;">
-    {% endif %}
-    <h2 style="font-size:13px; line-height:1.4;">Игра в городское продюсерование</h2>
-    <div style="font-size:11px; color:#7a99bb; margin-top:6px; line-height:1.5;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+      {% if logo_exists %}
+      <img src="{{ url_for('static', filename='logo.png') }}"
+           alt="Логотип" style="width:36px; height:auto; flex-shrink:0;">
+      {% endif %}
+      <h2 style="font-size:13px; line-height:1.4; margin:0;">Игра в городское продюсерование</h2>
+    </div>
+    <div style="font-size:11px; color:#7a99bb; line-height:1.5;">
       по авторской методологии Святослава Мурунова<br>
       <a href="https://cityuniversity.ru/urban-producers-school"
          target="_blank"
