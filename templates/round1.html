@@ -5,38 +5,144 @@
 <div class="page-title">Раунд 1 · Исследование</div>
 <div class="page-subtitle">⏱ Время этапа — около 20 минут</div>
 
-{% set sections = [
-  ('r1_gen',  'Генераторы',        'badge-green',  'Генераторы создают идеи и смыслы',
-   'Идеи и смыслы'),
-  ('r1_prob', 'Проблематизаторы',  'badge-blue',   'Проблематизаторы находят проблемы и боли горожан',
-   'Проблемы и боли'),
-  ('r1_sol',  'Решатели',          'badge-purple',  'Решатели придумывают новые проекты и продукты',
-   'Решения, проекты и продукты'),
-  ('r1_mak',  'Делатели',          'badge-orange', 'Делатели находят технологии и ресурсы, чтобы выпустить продукт, реализовать проект',
-   'Что и как можно произвести'),
-  ('r1_exp',  'Экспортеры',        'badge-red',    'Экспортеры владеют информацией о том, какие проекты и продукты продаются на внешнем рынке — в других городах и странах',
-   'Экспортные услуги и товары'),
-] %}
+{% macro role_row(label, text) %}
+<p style="margin:3px 0;"><strong style="color:#1e293b;">{{ label }}</strong> {{ text }}</p>
+{% endmacro %}
 
-{% for key, name, badge_class, desc, placeholder in sections %}
+<!-- Генераторы -->
 <div class="card accent-r1">
-  <div class="card-title">
-    <span class="badge {{ badge_class }}">{{ name }}</span>
+  <div class="card-title"><span class="badge badge-green">Генераторы</span></div>
+  <div class="card-desc">
+    <p><strong>Генераторы создают идеи и смыслы.</strong></p>
+    {{ role_row('Создают:', 'Смыслы, идеи, концепции, научные открытия, культурные коды') }}
+    {{ role_row('Субъекты:', 'Учёные, художники, поэты, музыканты, философы, предприниматели-визионеры') }}
+    {{ role_row('Институции:', 'Музеи, центры современного искусства, научные центры, университеты') }}
+    {{ role_row('Ресурсы:', 'История, краеведение, диалог с другими культурами, экспедиции, архитектура, природа') }}
+    {{ role_row('Механизм:', 'Мозг — средство производства. Эффективность через плотность связей, обратную связь, рефлексию') }}
+    {{ role_row('Проблема:', 'Недооценены, не включены в городскую повестку, нет рынка идей. Город на аутсорсе') }}
+    {{ role_row('Финансы:', 'Некоммерческая деятельность → меценаты, бюджет, фонды') }}
+    <div style="background:#f0fdf4; border-left:3px solid #22c55e; padding:8px 12px; margin-top:10px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Какие смыслы, символы, истории, культурные коды мы видим в этой территории? Что уникального? Какие традиции / материалы / навыки / фольклор?
+    </div>
   </div>
-  <div class="card-desc">{{ desc }}</div>
-  <label class="field-label">{{ placeholder }}</label>
-  <textarea rows="8" data-field="{{ key }}"
-            id="field-{{ key }}"
-            placeholder="{{ placeholder }}...">{{ data.get(key, '') }}</textarea>
+  <label class="field-label">Идеи и смыслы</label>
+  <textarea rows="8" data-field="r1_gen" id="field-r1_gen"
+            placeholder="Идеи и смыслы...">{{ data.get('r1_gen', '') }}</textarea>
   <div class="save-row">
     <button class="btn btn-primary btn-sm"
-            onclick="saveField('{{ key }}', document.getElementById('field-{{ key }}').value, this)">
+            onclick="saveField('r1_gen', document.getElementById('field-r1_gen').value, this)">
       Записать
     </button>
-    <span class="saved-msg" id="msg-{{ key }}"></span>
   </div>
 </div>
-{% endfor %}
+
+<!-- Проблематизаторы -->
+<div class="card accent-r1">
+  <div class="card-title"><span class="badge badge-blue">Проблематизаторы</span></div>
+  <div class="card-desc">
+    <p><strong>Проблематизаторы находят проблемы и боли горожан. Формулируют запросы на изменения.</strong></p>
+    {{ role_row('Создают:', 'Городские данные, гипотезы, симптомы, тренды, ТЗ') }}
+    {{ role_row('Субъекты:', 'Социологи, аналитики, депутаты, врачи, учителя, участковые, активисты') }}
+    {{ role_row('Институции:', 'Бюро городских исследований, кафедры, клубы этнографов') }}
+    {{ role_row('Ресурсы:', 'Повседневный опыт жителей, обратная связь') }}
+    {{ role_row('Механизм:', 'Анализ реальности → ТЗ. Цель — понять, не продать') }}
+    {{ role_row('Проблема:', 'Нет права на самоанализ, нет языка описания реальности') }}
+    {{ role_row('Финансы:', 'Рынок городских данных не сформирован') }}
+    <div style="background:#eff6ff; border-left:3px solid #3b82f6; padding:8px 12px; margin-top:10px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Что болит? Что не работает? Какие симптомы? Какие данные есть или нужны? Что жители говорят, если спросить?
+    </div>
+  </div>
+  <label class="field-label">Проблемы и боли</label>
+  <textarea rows="8" data-field="r1_prob" id="field-r1_prob"
+            placeholder="Проблемы и боли...">{{ data.get('r1_prob', '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r1_prob', document.getElementById('field-r1_prob').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
+
+<!-- Решатели -->
+<div class="card accent-r1">
+  <div class="card-title"><span class="badge badge-purple">Решатели</span></div>
+  <div class="card-desc">
+    <p><strong>Решатели придумывают новые проекты и продукты для решения проблем.</strong></p>
+    {{ role_row('Создают:', 'Решения, технологии, модели, школы, стили, оргсхемы') }}
+    {{ role_row('Субъекты:', 'Дизайнеры, методологи, инженеры, креаторы, IT') }}
+    {{ role_row('Институции:', 'Дизайн-студии, IT, инжиниринг, R&D') }}
+    {{ role_row('Ресурсы:', 'Локальные смыслы + ТЗ + творческий метод') }}
+    {{ role_row('Механизм:', 'Вдохновение культурой → синтез → решение. Не копирование') }}
+    {{ role_row('Проблема:', 'Сами пишут ТЗ, копируют. Скатились в производство') }}
+    {{ role_row('Финансы:', 'Ядро экономики. Должны заказывать исследования') }}
+    <div style="background:#f5f3ff; border-left:3px solid #8b5cf6; padding:8px 12px; margin-top:10px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Какие решения уже есть на рынке для этих проблем? Какие технологии можно создать? Что можно сделать уникального?
+    </div>
+  </div>
+  <label class="field-label">Решения, проекты и продукты</label>
+  <textarea rows="8" data-field="r1_sol" id="field-r1_sol"
+            placeholder="Решения, проекты и продукты...">{{ data.get('r1_sol', '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r1_sol', document.getElementById('field-r1_sol').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
+
+<!-- Делатели -->
+<div class="card accent-r1">
+  <div class="card-title"><span class="badge badge-orange">Делатели</span></div>
+  <div class="card-desc">
+    <p><strong>Делатели находят технологии и ресурсы, чтобы выпустить продукт, реализовать проект.</strong></p>
+    {{ role_row('Создают:', 'Продукты, услуги, товары') }}
+    {{ role_row('Субъекты:', 'Производители, сервис, фрилансеры, ремесленники') }}
+    {{ role_row('Институции:', 'Фабрики, мастерские, цеха, общепит') }}
+    {{ role_row('Ресурсы:', 'Линии, рецептуры, лекала, оборудование') }}
+    {{ role_row('Механизм:', 'Производство + продажа. Готовые технологии → конкуренция ценой') }}
+    {{ role_row('Проблема:', 'Не заказывают НИОКР, типовые линии') }}
+    {{ role_row('Финансы:', 'При деньгах, но тратят на перевооружение') }}
+    <div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:8px 12px; margin-top:10px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Что можно произвести с доступными ресурсами? Какие мощности есть? Что мешает производить уникальное? Чьи технологии используем?
+    </div>
+  </div>
+  <label class="field-label">Что и как можно произвести</label>
+  <textarea rows="8" data-field="r1_mak" id="field-r1_mak"
+            placeholder="Что и как можно произвести...">{{ data.get('r1_mak', '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r1_mak', document.getElementById('field-r1_mak').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
+
+<!-- Экспортеры -->
+<div class="card accent-r1">
+  <div class="card-title"><span class="badge badge-red">Экспортеры</span></div>
+  <div class="card-desc">
+    <p><strong>Экспортеры владеют информацией о том, какие проекты и продукты продаются на внешнем рынке — в других городах и странах.</strong></p>
+    {{ role_row('Создают:', 'Трафик, каналы, потоки') }}
+    {{ role_row('Субъекты:', 'Рестораторы, отельеры, медиа, университеты, аэропорты') }}
+    {{ role_row('Институции:', 'Гостиницы, аэропорты, медиа, площадки') }}
+    {{ role_row('Ресурсы:', 'Туристы, студенты, земляки, мемы') }}
+    {{ role_row('Механизм:', 'Замыкают потоки на себя, клонируют себе подобных') }}
+    {{ role_row('Проблема:', 'Нет коллабораций, нет диверсификации') }}
+    {{ role_row('Финансы:', 'При деньгах. Не инвестируют в экосистему') }}
+    <div style="background:#fff1f2; border-left:3px solid #ef4444; padding:8px 12px; margin-top:10px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Какие потоки проходят через территорию? Кто приезжает, уезжает? Какие каналы есть? Кому за пределами это может быть нужно?
+    </div>
+  </div>
+  <label class="field-label">Экспортные услуги и товары</label>
+  <textarea rows="8" data-field="r1_exp" id="field-r1_exp"
+            placeholder="Экспортные услуги и товары...">{{ data.get('r1_exp', '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r1_exp', document.getElementById('field-r1_exp').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
 
 <div class="divider"></div>
 
