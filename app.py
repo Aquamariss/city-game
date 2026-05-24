@@ -18,6 +18,12 @@ MAX_GAMES = 4
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+@app.context_processor
+def inject_globals():
+    logo_path = os.path.join(app.static_folder, 'logo.png')
+    return {'logo_exists': os.path.exists(logo_path)}
+
+
 RISKS = {
     1: ("Художник ушёл",
         "Генератор смыслов, вдохновивший проект, отказался участвовать. "
