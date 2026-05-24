@@ -55,7 +55,7 @@
 
 {% for sec_key, sec_title, items in sections %}
 <div class="card" style="padding:16px 24px 8px;">
-  <div class="card-title" style="margin-bottom:12px;">{{ sec_title }}</div>
+  <div class="card-title" style="margin-bottom:12px;">{{ loop.index }}. {{ sec_title }}</div>
 
   {% for item_key, item_text in items %}
   {% set field_key = 'check_' + item_key %}
