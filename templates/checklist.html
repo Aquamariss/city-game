@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Чек-лист{% endblock %}
+
+{% block content %}
+<div class="page-title">✅ Чек-лист</div>
+<div class="page-subtitle">Отмечайте пункты по мере выполнения — галки сохраняются и видны всем участникам.</div>
+
+{% set sections = [
+  ('s1', 'Разведка и смыслы', [
+    ('s1_i1', 'Разведка проведена'),
+    ('s1_i2', 'Модель смыслов собрана (5–7 кодов)'),
+    ('s1_i3', 'Генераторы привлечены'),
+    ('s1_i4', 'Вдохновение локальное'),
+  ]),
+  ('s2', 'ТЗ и данные', [
+    ('s2_i1', 'ТЗ сформулировано коллективно'),
+    ('s2_i2', 'Опирается на данные'),
+    ('s2_i3', 'Люди «с земли» привлечены'),
+    ('s2_i4', 'Общий язык описания'),
+  ]),
+  ('s3', 'Гипотезы', [
+    ('s3_i1', 'Гипотезы сформулированы'),
+    ('s3_i2', 'Эксперимент проведён'),
+    ('s3_i3', 'ТЗ скорректировано'),
+  ]),
+  ('s4', 'Кооперация', [
+    ('s4_i1', 'Переговоры со всеми'),
+    ('s4_i2', 'Схема: кто + что + условия'),
+    ('s4_i3', 'Прибыль согласована'),
+    ('s4_i4', 'Генераторы включены'),
+  ]),
+  ('s5', 'Технология', [
+    ('s5_i1', 'Создаётся технология, не только продукт'),
+    ('s5_i2', 'На локальных смыслах'),
+    ('s5_i3', 'Документирована'),
+    ('s5_i4', 'Продукт уникален'),
+  ]),
+  ('s6', 'Экспорт', [
+    ('s6_i1', 'Определено что экспортируем'),
+    ('s6_i2', 'Покупатели определены'),
+    ('s6_i3', 'Высокая маржа'),
+    ('s6_i4', 'Прибыль в цепочку'),
+  ]),
+  ('s7', 'Связующие роли', [
+    ('s7_i1', 'Куратор выбрал вектор'),
+    ('s7_i2', 'Продюсер собрал кооперацию'),
+    ('s7_i3', 'Методолог видит сверхрынок'),
+  ]),
+  ('s8', 'Устойчивость', [
+    ('s8_i1', 'Опирается на идентичность'),
+    ('s8_i2', 'Рефлексия проведена'),
+    ('s8_i3', 'Формула работает'),
+  ]),
+] %}
+
+{% for sec_key, sec_title, items in sections %}
+<div class="card" style="padding:16px 24px 8px;">
+  <div class="card-title" style="margin-bottom:12px;">{{ sec_title }}</div>
+
+  {% for item_key, item_text in items %}
+  {% set field_key = 'check_' + item_key %}
+  {% set checked = data.get(field_key, false) %}
+  <div class="cl-item {% if checked %}cl-checked{% endif %}" id="row-{{ field_key }}">
+    <input type="checkbox"
+           id="cb-{{ field_key }}"
+           data-check="{{ field_key }}"
+           {% if checked %}checked{% endif %}
+           onchange="onCheck('{{ field_key }}', this)">
+    <label for="cb-{{ field_key }}">{{ item_text }}</label>
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<style>
+.cl-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.cl-item:last-child { border-bottom: none; }
+
+.cl-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: #22c55e;
+}
+
+.cl-item label {
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1.4;
+  transition: color 0.2s, text-decoration 0.2s;
+}
+
+.cl-checked label {
+  color: #22c55e;
+  text-decoration: line-through;
+  text-decoration-color: #22c55e;
+}
+</style>
+
+<script>
+async function onCheck(key, cb) {
+  const row = document.getElementById('row-' + key);
+  if (cb.checked) {
+    row.classList.add('cl-checked');
+  } else {
+    row.classList.remove('cl-checked');
+  }
+  await saveField(key, cb.checked, null);
+}
+
+window.onPollUpdate = function(data) {
+  document.querySelectorAll('[data-check]').forEach(cb => {
+    const key = cb.dataset.check;
+    if (data[key] === undefined) return;
+    const serverVal = Boolean(data[key]);
+    if (cb.checked !== serverVal) {
+      cb.checked = serverVal;
+      const row = document.getElementById('row-' + key);
+      if (row) {
+        serverVal ? row.classList.add('cl-checked') : row.classList.remove('cl-checked');
+      }
+    }
+  });
+};
+</script>
+{% endblock %}

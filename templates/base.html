@@ -75,6 +75,10 @@
        class="{% if request.endpoint == 'round7' %}active{% endif %}">
       Раунд 7 · Итог
     </a>
+    <a href="{{ url_for('checklist') }}"
+       class="{% if request.endpoint == 'checklist' %}active{% endif %}">
+      ✅ Чек-лист
+    </a>
     {% endif %}
   </nav>
 

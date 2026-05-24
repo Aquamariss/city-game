@@ -249,6 +249,13 @@ def _risks_json():
     return {str(k): {'title': v[0], 'text': v[1]} for k, v in RISKS.items()}
 
 
+@app.route('/checklist')
+@game_required
+def checklist():
+    game = get_current_game()
+    return render_template('checklist.html', game=game, data=game.get('data', {}))
+
+
 @app.route('/print/r3-final')
 @game_required
 def print_r3_final():
