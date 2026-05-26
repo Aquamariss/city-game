@@ -136,87 +136,131 @@ async function generateRound2(btn) {
 
 
 // ── Round-2: dynamic lists ────────────────────────────────────────────────
+// Items are stored as individual fields per index:
+//   {fieldKey}_count          – total number of items
+//   {fieldKey}_{i}_text       – text of item i
+//   {fieldKey}_{i}_votes      – votes for item i
+// This lets dirty-field protection work per-item and lets polling
+// add new items from other users without destroying unsaved edits.
 
 function makeDynamicList(containerId, fieldKey, maxItems) {
   const container = document.getElementById(containerId);
-  if (!container) return;
+  if (!container) return null;
 
-  let items = [];
+  const countKey = fieldKey + '_count';
+  const isCC     = (fieldKey === 'r2_cc');
 
-  function render() {
-    container.innerHTML = '';
-    items.forEach((item, i) => {
-      const div = document.createElement('div');
-      div.className = 'list-item';
+  function tKey(i) { return fieldKey + '_' + i + '_text'; }
+  function vKey(i) { return fieldKey + '_' + i + '_votes'; }
 
-      const ta = document.createElement('textarea');
-      ta.rows = 2;
-      ta.placeholder = fieldKey === 'r2_cultural_codes' ? 'Культурный код' : 'Городская проблема';
-      ta.value = item.text || '';
-      ta.addEventListener('input', () => { items[i].text = ta.value; });
+  let domCount = 0;
 
-      const votes = document.createElement('input');
-      votes.type = 'number';
-      votes.min = 0;
-      votes.max = 99;
-      votes.placeholder = 'Голоса';
-      votes.className = 'votes-input';
-      votes.value = item.votes != null ? item.votes : '';
-      votes.addEventListener('input', () => {
-        items[i].votes = votes.value !== '' ? parseInt(votes.value) : null;
-      });
+  function addRow(i, text, votes, focusIt) {
+    const div = document.createElement('div');
+    div.className  = 'list-item';
+    div.dataset.rowIndex = i;
 
-      const del = document.createElement('button');
-      del.className = 'btn btn-danger btn-sm';
-      del.textContent = '✕';
-      del.addEventListener('click', () => {
-        items.splice(i, 1);
-        render();
-      });
+    const ta = document.createElement('textarea');
+    ta.rows        = 2;
+    ta.placeholder = isCC ? 'Культурный код' : 'Городская проблема';
+    ta.value       = text || '';
+    ta.dataset.field = tKey(i);
 
-      div.appendChild(ta);
-      div.appendChild(votes);
-      div.appendChild(del);
-      container.appendChild(div);
-    });
-  }
+    const vi = document.createElement('input');
+    vi.type        = 'number'; vi.min = 0; vi.max = 99;
+    vi.placeholder = 'Голоса'; vi.className = 'votes-input';
+    vi.value       = (votes != null && votes !== '') ? votes : '';
+    vi.dataset.field = vKey(i);
 
-  // Add button
-  const addBtn = document.getElementById(containerId + '-add');
-  if (addBtn) {
-    addBtn.addEventListener('click', () => {
-      if (items.length >= maxItems) return;
-      items.push({ text: '', votes: null });
-      render();
-    });
-  }
-
-  // Save button
-  const saveBtn = document.getElementById(containerId + '-save');
-  if (saveBtn) {
+    const saveBtn = document.createElement('button');
+    saveBtn.className   = 'btn btn-primary btn-sm';
+    saveBtn.textContent = 'Записать';
     saveBtn.addEventListener('click', () => {
-      saveFields({ [fieldKey]: items }, saveBtn);
+      const idx = parseInt(div.dataset.rowIndex);
+      const f = {};
+      f[tKey(idx)] = ta.value;
+      f[vKey(idx)] = vi.value !== '' ? parseInt(vi.value) : null;
+      saveFields(f, saveBtn);
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.className   = 'btn btn-danger btn-sm';
+    delBtn.textContent = '✕';
+    delBtn.addEventListener('click', () => deleteItem(div));
+
+    div.append(ta, vi, saveBtn, delBtn);
+    container.appendChild(div);
+    domCount++;
+    if (focusIt) ta.focus();
+  }
+
+  function getItems() {
+    return Array.from(container.querySelectorAll('[data-row-index]')).map(row => {
+      const v = row.querySelector('input[type=number]')?.value;
+      return {
+        text:  row.querySelector('textarea')?.value || '',
+        votes: (v !== '' && v != null) ? parseInt(v) : null,
+      };
     });
   }
 
-  // Load initial data from page
+  function clearListDirty() {
+    for (let i = 0; i <= domCount + 1; i++) {
+      dirtyFields.delete(tKey(i));
+      dirtyFields.delete(vKey(i));
+    }
+    dirtyFields.delete(countKey);
+  }
+
+  function rebuild(items) {
+    container.innerHTML = '';
+    domCount = 0;
+    items.forEach((it, i) => addRow(i, it.text, it.votes, false));
+  }
+
+  function deleteItem(div) {
+    const items = getItems();
+    const idx   = parseInt(div.dataset.rowIndex);
+    items.splice(idx, 1);
+    clearListDirty();
+    rebuild(items);
+    const f = { [countKey]: items.length };
+    items.forEach((it, i) => { f[tKey(i)] = it.text; f[vKey(i)] = it.votes; });
+    saveFields(f, null);
+  }
+
+  // Load initial data from embedded JSON
   const initEl = document.getElementById(containerId + '-init');
   if (initEl) {
     try {
-      items = JSON.parse(initEl.textContent || '[]');
-    } catch (e) {
-      items = [];
-    }
-    render();
+      const d   = JSON.parse(initEl.textContent || '{}');
+      const cnt = d.count || 0;
+      for (let i = 0; i < cnt; i++) {
+        addRow(i, d.items?.[i]?.text, d.items?.[i]?.votes, false);
+      }
+    } catch (e) { /* ignore */ }
   }
 
-  // Expose for polling updates
+  // "+ Добавить" button
+  document.getElementById(containerId + '-add')?.addEventListener('click', () => {
+    if (domCount >= maxItems) return;
+    const idx = domCount;
+    saveFields({ [countKey]: idx + 1 }, null); // announce new slot to other users
+    addRow(idx, '', null, true);
+  });
+
+  // Hide old "save whole list" button — each item has its own save
+  const oldSaveBtn = document.getElementById(containerId + '-save');
+  if (oldSaveBtn) oldSaveBtn.style.display = 'none';
+
   return {
-    update(newItems) {
-      if (!activeFieldKey || !activeFieldKey.startsWith(fieldKey)) {
-        items = newItems || [];
-        render();
+    // Called by onPollUpdate — only adds rows for indices not yet in DOM.
+    // Existing row values are synced by the standard [data-field] pollData() loop.
+    sync(data) {
+      const serverCount = typeof data[countKey] === 'number' ? data[countKey] : 0;
+      for (let i = domCount; i < serverCount; i++) {
+        addRow(i, data[tKey(i)] || '', data[vKey(i)] ?? null, false);
       }
-    }
+    },
   };
 }

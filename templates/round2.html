@@ -30,19 +30,19 @@
 <!-- Культурные коды -->
 <div class="card accent-r2">
   <div class="card-title">Культурные коды территории</div>
-  <div class="card-desc">Какой этот город и его жители? В чём их идентичность? 5–7 вариантов.</div>
+  <div class="card-desc">Какой этот город и его жители? В чём их идентичность? 5–7 вариантов.<br>
+    <small style="color:var(--muted);">Каждый участник может добавлять варианты одновременно — сохраняйте каждый пункт кнопкой «Записать».</small>
+  </div>
 
   <div id="cultural-codes-list"></div>
   <script type="application/json" id="cultural-codes-list-init">
-    {{ data.get('r2_cultural_codes', []) | tojson }}
+{% set cc_n = data.get('r2_cc_count', 0) %}
+{"count": {{ cc_n }}, "items": [{% for i in range(cc_n) %}{"text": {{ data.get('r2_cc_' ~ i|string ~ '_text', '') | tojson }}, "votes": {{ data.get('r2_cc_' ~ i|string ~ '_votes', none) | tojson }}}{% if not loop.last %},{% endif %}{% endfor %}]}
   </script>
 
   <div class="save-row" style="margin-top:8px;">
     <button class="btn btn-outline btn-sm" id="cultural-codes-list-add">
       + Добавить вариант
-    </button>
-    <button class="btn btn-primary btn-sm" id="cultural-codes-list-save">
-      Записать список
     </button>
   </div>
 </div>
@@ -50,19 +50,19 @@
 <!-- Боли территории -->
 <div class="card accent-r2">
   <div class="card-title">Боли территории</div>
-  <div class="card-desc">Основные боли и проблемы города, 5–7 вариантов.</div>
+  <div class="card-desc">Основные боли и проблемы города, 5–7 вариантов.<br>
+    <small style="color:var(--muted);">Каждый участник может добавлять варианты одновременно — сохраняйте каждый пункт кнопкой «Записать».</small>
+  </div>
 
   <div id="city-pains-list"></div>
   <script type="application/json" id="city-pains-list-init">
-    {{ data.get('r2_city_pains', []) | tojson }}
+{% set cp_n = data.get('r2_cp_count', 0) %}
+{"count": {{ cp_n }}, "items": [{% for i in range(cp_n) %}{"text": {{ data.get('r2_cp_' ~ i|string ~ '_text', '') | tojson }}, "votes": {{ data.get('r2_cp_' ~ i|string ~ '_votes', none) | tojson }}}{% if not loop.last %},{% endif %}{% endfor %}]}
   </script>
 
   <div class="save-row" style="margin-top:8px;">
     <button class="btn btn-outline btn-sm" id="city-pains-list-add">
       + Добавить вариант
-    </button>
-    <button class="btn btn-primary btn-sm" id="city-pains-list-save">
-      Записать список
     </button>
   </div>
 </div>
@@ -70,12 +70,12 @@
 
 {% block scripts %}
 <script>
-const ccList   = makeDynamicList('cultural-codes-list', 'r2_cultural_codes', 10);
-const painList = makeDynamicList('city-pains-list',     'r2_city_pains',     10);
+const ccList   = makeDynamicList('cultural-codes-list', 'r2_cc', 10);
+const painList = makeDynamicList('city-pains-list',     'r2_cp', 10);
 
 window.onPollUpdate = function(data) {
-  if (data.r2_cultural_codes && ccList)   ccList.update(data.r2_cultural_codes);
-  if (data.r2_city_pains     && painList) painList.update(data.r2_city_pains);
+  if (ccList)   ccList.sync(data);
+  if (painList) painList.sync(data);
 };
 </script>
 {% endblock %}

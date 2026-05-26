@@ -35,6 +35,19 @@
     </div>
   </div>
 </div>
+
+<div class="card accent-r5">
+  <div class="card-title">План реагирования</div>
+  <div class="card-desc">Запишите решение команды — поле сохраняется для всех участников и не сбрасывается при смене риска.</div>
+  <textarea rows="6" data-field="r5_response_plan" id="field-r5_response_plan"
+            placeholder="Как команда планирует реагировать на риски?">{{ data.get('r5_response_plan', '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r5_response_plan', document.getElementById('field-r5_response_plan').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
