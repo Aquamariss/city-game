@@ -36,8 +36,7 @@
 
   <div id="cultural-codes-list"></div>
   <script type="application/json" id="cultural-codes-list-init">
-{% set cc_n = data.get('r2_cc_count', 0) %}
-{"count": {{ cc_n }}, "items": [{% for i in range(cc_n) %}{"text": {{ data.get('r2_cc_' ~ i|string ~ '_text', '') | tojson }}, "votes": {{ data.get('r2_cc_' ~ i|string ~ '_votes', none) | tojson }}}{% if not loop.last %},{% endif %}{% endfor %}]}
+{{ cc_items | tojson }}
   </script>
 
   <div class="save-row" style="margin-top:8px;">
@@ -56,8 +55,7 @@
 
   <div id="city-pains-list"></div>
   <script type="application/json" id="city-pains-list-init">
-{% set cp_n = data.get('r2_cp_count', 0) %}
-{"count": {{ cp_n }}, "items": [{% for i in range(cp_n) %}{"text": {{ data.get('r2_cp_' ~ i|string ~ '_text', '') | tojson }}, "votes": {{ data.get('r2_cp_' ~ i|string ~ '_votes', none) | tojson }}}{% if not loop.last %},{% endif %}{% endfor %}]}
+{{ cp_items | tojson }}
   </script>
 
   <div class="save-row" style="margin-top:8px;">

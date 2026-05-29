@@ -136,131 +136,137 @@ async function generateRound2(btn) {
 
 
 // ── Round-2: dynamic lists ────────────────────────────────────────────────
-// Items are stored as individual fields per index:
-//   {fieldKey}_count          – total number of items
-//   {fieldKey}_{i}_text       – text of item i
-//   {fieldKey}_{i}_votes      – votes for item i
-// This lets dirty-field protection work per-item and lets polling
-// add new items from other users without destroying unsaved edits.
+// Items use timestamp-based IDs assigned at first save, e.g.:
+//   r2_cc_1748523901234_text   – text of one cultural-code item
+//   r2_cc_1748523901234_votes  – its vote count
+//   r2_cc_1748523901234_del    – tombstone flag (item was deleted)
+//
+// No shared counter → no race condition between concurrent users.
+// Each user's save writes to a unique key; no one overwrites anyone else.
+// Editing a saved item re-writes the same key (safe: only one editor at a time).
+
+function _reKey(s) {
+  // Escape special regex chars in a string used inside RegExp()
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 function makeDynamicList(containerId, fieldKey, maxItems) {
   const container = document.getElementById(containerId);
   if (!container) return null;
 
-  const countKey = fieldKey + '_count';
-  const isCC     = (fieldKey === 'r2_cc');
+  const isCC    = (fieldKey === 'r2_cc');
+  const pattern = new RegExp('^' + _reKey(fieldKey) + '_(\\d+)_text$');
 
-  function tKey(i) { return fieldKey + '_' + i + '_text'; }
-  function vKey(i) { return fieldKey + '_' + i + '_votes'; }
+  function tKey(id) { return fieldKey + '_' + id + '_text'; }
+  function vKey(id) { return fieldKey + '_' + id + '_votes'; }
+  function dKey(id) { return fieldKey + '_' + id + '_del'; }
 
-  let domCount = 0;
+  // knownIds tracks all IDs currently rendered in DOM
+  // (real timestamp IDs for saved items, '__new__N' for unsaved)
+  const knownIds = new Set();
+  let tempSeq = 0;
 
-  function addRow(i, text, votes, focusIt) {
+  function addRow(realId, text, votes, focusIt) {
+    // realId = '' for a brand-new unsaved item
+    const trackId = realId || ('__new__' + (++tempSeq));
+    if (knownIds.has(trackId)) return; // already in DOM
+    knownIds.add(trackId);
+
     const div = document.createElement('div');
-    div.className  = 'list-item';
-    div.dataset.rowIndex = i;
+    div.className        = 'list-item';
+    div.dataset.realId   = realId;   // '' until first save
+    div.dataset.trackId  = trackId;
 
     const ta = document.createElement('textarea');
     ta.rows        = 2;
     ta.placeholder = isCC ? 'Культурный код' : 'Городская проблема';
     ta.value       = text || '';
-    ta.dataset.field = tKey(i);
+    // data-field only set once we have a real ID (enables poll sync + dirtyFields)
+    if (realId) ta.dataset.field = tKey(realId);
 
     const vi = document.createElement('input');
     vi.type        = 'number'; vi.min = 0; vi.max = 99;
     vi.placeholder = 'Голоса'; vi.className = 'votes-input';
     vi.value       = (votes != null && votes !== '') ? votes : '';
-    vi.dataset.field = vKey(i);
+    if (realId) vi.dataset.field = vKey(realId);
 
     const saveBtn = document.createElement('button');
     saveBtn.className   = 'btn btn-primary btn-sm';
     saveBtn.textContent = 'Записать';
     saveBtn.addEventListener('click', () => {
-      const idx = parseInt(div.dataset.rowIndex);
+      let id = div.dataset.realId;
+
+      if (!id) {
+        // First save: mint a timestamp ID now
+        id = Date.now().toString();
+        div.dataset.realId = id;
+        // Migrate tracking entry
+        knownIds.delete(div.dataset.trackId);
+        div.dataset.trackId = id;
+        knownIds.add(id);
+        // Wire up [data-field] so polling & dirtyFields work from here on
+        ta.dataset.field = tKey(id);
+        vi.dataset.field = vKey(id);
+      }
+
       const f = {};
-      f[tKey(idx)] = ta.value;
-      f[vKey(idx)] = vi.value !== '' ? parseInt(vi.value) : null;
+      f[tKey(id)] = ta.value;
+      f[vKey(id)] = vi.value !== '' ? parseInt(vi.value) : null;
       saveFields(f, saveBtn);
     });
 
     const delBtn = document.createElement('button');
     delBtn.className   = 'btn btn-danger btn-sm';
     delBtn.textContent = '✕';
-    delBtn.addEventListener('click', () => deleteItem(div));
+    delBtn.addEventListener('click', () => {
+      const id = div.dataset.realId;
+      knownIds.delete(div.dataset.trackId);
+      div.remove();
+      if (id) {
+        // Write tombstone so the item never reappears via polling
+        saveFields({ [dKey(id)]: 1 }, null);
+        dirtyFields.delete(tKey(id));
+        dirtyFields.delete(vKey(id));
+      }
+    });
 
     div.append(ta, vi, saveBtn, delBtn);
     container.appendChild(div);
-    domCount++;
     if (focusIt) ta.focus();
   }
 
-  function getItems() {
-    return Array.from(container.querySelectorAll('[data-row-index]')).map(row => {
-      const v = row.querySelector('input[type=number]')?.value;
-      return {
-        text:  row.querySelector('textarea')?.value || '',
-        votes: (v !== '' && v != null) ? parseInt(v) : null,
-      };
-    });
-  }
-
-  function clearListDirty() {
-    for (let i = 0; i <= domCount + 1; i++) {
-      dirtyFields.delete(tKey(i));
-      dirtyFields.delete(vKey(i));
-    }
-    dirtyFields.delete(countKey);
-  }
-
-  function rebuild(items) {
-    container.innerHTML = '';
-    domCount = 0;
-    items.forEach((it, i) => addRow(i, it.text, it.votes, false));
-  }
-
-  function deleteItem(div) {
-    const items = getItems();
-    const idx   = parseInt(div.dataset.rowIndex);
-    items.splice(idx, 1);
-    clearListDirty();
-    rebuild(items);
-    const f = { [countKey]: items.length };
-    items.forEach((it, i) => { f[tKey(i)] = it.text; f[vKey(i)] = it.votes; });
-    saveFields(f, null);
-  }
-
-  // Load initial data from embedded JSON
+  // Load items pre-rendered by the server (array of {id, text, votes})
   const initEl = document.getElementById(containerId + '-init');
   if (initEl) {
     try {
-      const d   = JSON.parse(initEl.textContent || '{}');
-      const cnt = d.count || 0;
-      for (let i = 0; i < cnt; i++) {
-        addRow(i, d.items?.[i]?.text, d.items?.[i]?.votes, false);
-      }
+      const items = JSON.parse(initEl.textContent || '[]');
+      items.forEach(it => addRow(it.id, it.text, it.votes, false));
     } catch (e) { /* ignore */ }
   }
 
-  // "+ Добавить" button
+  // "+ Добавить" — creates an unsaved row; ID is assigned on first save
   document.getElementById(containerId + '-add')?.addEventListener('click', () => {
-    if (domCount >= maxItems) return;
-    const idx = domCount;
-    saveFields({ [countKey]: idx + 1 }, null); // announce new slot to other users
-    addRow(idx, '', null, true);
+    if (knownIds.size >= maxItems) return;
+    addRow('', '', null, true);
   });
 
-  // Hide old "save whole list" button — each item has its own save
+  // Hide the now-unused "save whole list" button if present
   const oldSaveBtn = document.getElementById(containerId + '-save');
   if (oldSaveBtn) oldSaveBtn.style.display = 'none';
 
   return {
-    // Called by onPollUpdate — only adds rows for indices not yet in DOM.
-    // Existing row values are synced by the standard [data-field] pollData() loop.
+    // Called by onPollUpdate every 5 s.
+    // Scans server data for timestamp keys not yet in DOM and adds them.
+    // Existing rows are updated field-by-field by the standard pollData() loop.
     sync(data) {
-      const serverCount = typeof data[countKey] === 'number' ? data[countKey] : 0;
-      for (let i = domCount; i < serverCount; i++) {
-        addRow(i, data[tKey(i)] || '', data[vKey(i)] ?? null, false);
-      }
+      Object.keys(data).forEach(key => {
+        const m = key.match(pattern);
+        if (!m) return;
+        const id = m[1];
+        if (knownIds.has(id)) return;       // already rendered
+        if (data[dKey(id)]) return;         // tombstoned
+        addRow(id, data[tKey(id)] || '', data[vKey(id)] ?? null, false);
+      });
     },
   };
 }

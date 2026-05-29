@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import datetime
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
@@ -85,6 +86,30 @@ def update_game_data(game_id, new_fields):
     current = result.data[0].get('data', {}) if result.data else {}
     current.update(new_fields)
     supabase.table('games').update({'data': current}).eq('id', game_id).execute()
+
+
+def get_list_items(data, prefix):
+    """Return list items stored as {prefix}_{timestamp}_text/votes keys.
+
+    Items are sorted chronologically by their timestamp ID.
+    Items with a {prefix}_{id}_del flag are excluded (tombstoned).
+    """
+    pat = re.compile(r'^' + re.escape(prefix) + r'_(\d+)_text$')
+    items = []
+    for key, val in data.items():
+        m = pat.match(key)
+        if not m:
+            continue
+        ts = m.group(1)
+        if data.get(prefix + '_' + ts + '_del'):
+            continue
+        items.append({
+            'id':    ts,
+            'text':  val or '',
+            'votes': data.get(prefix + '_' + ts + '_votes'),
+        })
+    items.sort(key=lambda x: x['id'])
+    return items
 
 
 # ── Routes ───────────────────────────────────────────────────────────────────
@@ -178,7 +203,9 @@ def round1():
 def round2():
     game = get_current_game()
     data = game.get('data', {})
-    return render_template('round2.html', game=game, data=data)
+    return render_template('round2.html', game=game, data=data,
+                           cc_items=get_list_items(data, 'r2_cc'),
+                           cp_items=get_list_items(data, 'r2_cp'))
 
 
 @app.route('/round/3')
