@@ -263,7 +263,9 @@ def api_save():
 @game_required
 def api_data():
     game = get_current_game()
-    return jsonify(game.get('data', {}) if game else {})
+    resp = jsonify(game.get('data', {}) if game else {})
+    resp.headers['Cache-Control'] = 'no-store'
+    return resp
 
 
 @app.route('/api/risks')

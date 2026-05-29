@@ -44,9 +44,14 @@ document.addEventListener('input', e => {
   }
 });
 
+// game_id is stamped into <body data-game-id="..."> by base.html
+// Including it in the poll URL ensures browsers never serve a cached
+// response from a different game session.
+const _gameId = document.body.dataset.gameId || '';
+
 async function pollData() {
   try {
-    const resp = await fetch('/api/data');
+    const resp = await fetch('/api/data?gid=' + _gameId);
     if (!resp.ok) return;
     const data = await resp.json();
 
