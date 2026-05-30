@@ -51,6 +51,20 @@
   </div>
 </div>
 {% endfor %}
+
+<div class="card accent-r3">
+  <div class="card-title">Продукт</div>
+  <div class="field-group">
+    <textarea rows="5" data-field="r3_product" id="field-r3_product"
+              placeholder="Как именно будем решать проблему, какой проект реализуем, продукт создадим">{{ data.get('r3_product', '') }}</textarea>
+  </div>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r3_product', document.getElementById('field-r3_product').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
