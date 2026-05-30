@@ -53,20 +53,10 @@ RISKS = {
 }
 
 
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not session.get('logged_in'):
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated
-
-
 def game_required(f):
+    """Protects round pages: user must have loaded a game (entered GAME_PASSWORD)."""
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not session.get('logged_in'):
-            return redirect(url_for('login'))
         if not session.get('current_game_id'):
             return redirect(url_for('games'))
         return f(*args, **kwargs)
@@ -116,32 +106,18 @@ def get_list_items(data, prefix):
 
 @app.route('/')
 def index():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-    if not session.get('current_game_id'):
-        return redirect(url_for('games'))
-    return redirect(url_for('round1'))
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if request.form.get('password') == GAME_PASSWORD:
-            session['logged_in'] = True
-            return redirect(url_for('games'))
-        error = 'Неверный пароль'
-    return render_template('login.html', error=error)
+    if session.get('current_game_id'):
+        return redirect(url_for('round1'))
+    return redirect(url_for('games'))
 
 
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('games'))
 
 
 @app.route('/games')
-@login_required
 def games():
     result = (supabase.table('games')
               .select('id, name, created_at')
@@ -155,7 +131,6 @@ def games():
 
 
 @app.route('/games/new', methods=['POST'])
-@login_required
 def new_game():
     if request.form.get('admin_password') != ADMIN_PASSWORD:
         return redirect(url_for('games', error='wrong_code'))
@@ -177,15 +152,15 @@ def new_game():
     return redirect(url_for('game_info'))
 
 
-@app.route('/games/<game_id>/load')
-@login_required
+@app.route('/games/<game_id>/load', methods=['POST'])
 def load_game(game_id):
+    if request.form.get('game_password') != GAME_PASSWORD:
+        return redirect(url_for('games', error='wrong_game_code'))
     session['current_game_id'] = game_id
     return redirect(url_for('round1'))
 
 
 @app.route('/games/<game_id>/delete', methods=['POST'])
-@login_required
 def delete_game(game_id):
     if request.form.get('admin_password') != ADMIN_PASSWORD:
         return redirect(url_for('games', error='wrong_delete_code'))
@@ -196,7 +171,6 @@ def delete_game(game_id):
 
 
 @app.route('/game-info')
-@login_required
 def game_info():
     game = get_current_game()
     return render_template('game_info.html', game=game)
@@ -280,7 +254,6 @@ def api_data():
 
 
 @app.route('/api/risks')
-@login_required
 def api_risks():
     return jsonify(_risks_json())
 

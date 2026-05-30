@@ -23,20 +23,41 @@
     <div class="game-item-date">{{ g.created_at[:16].replace('T', ' ') }}</div>
   </div>
   <div style="display:flex; align-items:center; gap:8px;">
-    {% if g.id != current_game_id %}
-    <a href="{{ url_for('load_game', game_id=g.id) }}" class="btn btn-outline btn-sm">
-      Загрузить
-    </a>
-    {% else %}
+    {% if g.id == current_game_id %}
     <a href="{{ url_for('round1') }}" class="btn btn-primary btn-sm">
       Перейти к игре →
     </a>
+    {% else %}
+    <button class="btn btn-outline btn-sm"
+            onclick="toggleLoadForm('load-{{ g.id }}')">
+      Войти в игру
+    </button>
     {% endif %}
     <button class="btn btn-danger btn-sm"
             onclick="toggleDeleteForm('del-{{ g.id }}')"
             title="Удалить игру">✕</button>
   </div>
 </div>
+
+{% if g.id != current_game_id %}
+<div id="load-{{ g.id }}" style="display:none; margin:-4px 0 12px; padding:12px 16px;
+     background:#f0fdf4; border:1px solid #86efac; border-radius:8px;">
+  <form method="POST" action="{{ url_for('load_game', game_id=g.id) }}"
+        style="display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap;">
+    <div>
+      <label class="field-label" style="font-size:13px;">
+        Введите код для входа в «{{ g.name }}»
+      </label>
+      <input type="password" name="game_password"
+             placeholder="Код" style="width:160px;">
+    </div>
+    <button type="submit" class="btn btn-primary btn-sm">Войти</button>
+    <button type="button" class="btn btn-outline btn-sm"
+            onclick="toggleLoadForm('load-{{ g.id }}')">Отмена</button>
+  </form>
+</div>
+{% endif %}
+
 <div id="del-{{ g.id }}" style="display:none; margin:-4px 0 12px; padding:12px 16px;
      background:#fff5f5; border:1px solid #fecaca; border-radius:8px;">
   <form method="POST" action="{{ url_for('delete_game', game_id=g.id) }}"
@@ -46,7 +67,7 @@
         Введите код, чтобы удалить «{{ g.name }}»
       </label>
       <input type="password" name="admin_password"
-             placeholder="Код" style="width:160px;" autofocus>
+             placeholder="Код" style="width:160px;">
     </div>
     <button type="submit" class="btn btn-danger btn-sm">Удалить навсегда</button>
     <button type="button" class="btn btn-outline btn-sm"
@@ -57,6 +78,11 @@
 
 <div class="divider"></div>
 
+{% if request.args.get('error') == 'wrong_game_code' %}
+<div style="background:#fee2e2; color:#dc2626; border-radius:8px; padding:10px 16px; margin-bottom:16px; font-size:14px;">
+  Неверный код. Войти в игру не удалось.
+</div>
+{% endif %}
 {% if request.args.get('error') == 'wrong_code' %}
 <div style="background:#fee2e2; color:#dc2626; border-radius:8px; padding:10px 16px; margin-bottom:16px; font-size:14px;">
   Неверный код. Новая игра не создана.
@@ -84,12 +110,12 @@
 
 {% block scripts %}
 <script>
-function toggleDeleteForm(id) {
+function _toggleForm(id) {
   const el = document.getElementById(id);
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
-  if (el.style.display === 'block') {
-    el.querySelector('input[type=password]').focus();
-  }
+  if (el.style.display === 'block') el.querySelector('input[type=password]').focus();
 }
+function toggleLoadForm(id)   { _toggleForm(id); }
+function toggleDeleteForm(id) { _toggleForm(id); }
 </script>
 {% endblock %}

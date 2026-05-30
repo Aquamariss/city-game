@@ -84,9 +84,11 @@
     {% endif %}
   </nav>
 
+  {% if session.get('current_game_id') %}
   <div class="sidebar-footer">
-    <a href="{{ url_for('logout') }}">Выйти</a>
+    <a href="{{ url_for('logout') }}">Покинуть игру</a>
   </div>
+  {% endif %}
 </aside>
 
 <main class="main">
