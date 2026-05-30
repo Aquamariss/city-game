@@ -35,6 +35,147 @@
   </div>
 </div>
 
+{% macro role_row(label, text) %}
+<p style="margin:3px 0; font-size:13.5px;"><strong style="color:#1e293b;">{{ label }}</strong> {{ text }}</p>
+{% endmacro %}
+
+<div class="card">
+  <div class="card-title">Роли в игре</div>
+
+  <!-- Генераторы -->
+  <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+    <div class="card-title" style="font-size:14px; margin-bottom:8px;">
+      <span class="badge badge-green">Генераторы</span>
+    </div>
+    <p style="font-size:13.5px; margin-bottom:6px;"><strong>Генераторы создают идеи и смыслы.</strong></p>
+    {{ role_row('Создают:', 'Смыслы, идеи, концепции, научные открытия, культурные коды') }}
+    {{ role_row('Субъекты:', 'Учёные, художники, поэты, музыканты, философы, предприниматели-визионеры') }}
+    {{ role_row('Институции:', 'Музеи, центры современного искусства, научные центры, университеты') }}
+    {{ role_row('Ресурсы:', 'История, краеведение, диалог с другими культурами, экспедиции, архитектура, природа') }}
+    {{ role_row('Механизм:', 'Мозг — средство производства. Эффективность через плотность связей, обратную связь, рефлексию') }}
+    {{ role_row('Проблема:', 'Недооценены, не включены в городскую повестку, нет рынка идей. Город на аутсорсе') }}
+    {{ role_row('Финансы:', 'Некоммерческая деятельность → меценаты, бюджет, фонды') }}
+    <div style="background:#f0fdf4; border-left:3px solid #22c55e; padding:8px 12px; margin-top:8px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Какие смыслы, символы, истории, культурные коды мы видим в этой территории? Что уникального? Какие традиции / материалы / навыки / фольклор?
+    </div>
+  </div>
+
+  <!-- Проблематизаторы -->
+  <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+    <div class="card-title" style="font-size:14px; margin-bottom:8px;">
+      <span class="badge badge-blue">Проблематизаторы</span>
+    </div>
+    <p style="font-size:13.5px; margin-bottom:6px;"><strong>Проблематизаторы находят проблемы и боли горожан. Формулируют запросы на изменения.</strong></p>
+    {{ role_row('Создают:', 'Городские данные, гипотезы, симптомы, тренды, ТЗ') }}
+    {{ role_row('Субъекты:', 'Социологи, аналитики, депутаты, врачи, учителя, участковые, активисты') }}
+    {{ role_row('Институции:', 'Бюро городских исследований, кафедры, клубы этнографов') }}
+    {{ role_row('Ресурсы:', 'Повседневный опыт жителей, обратная связь') }}
+    {{ role_row('Механизм:', 'Анализ реальности → ТЗ. Цель — понять, не продать') }}
+    {{ role_row('Проблема:', 'Нет права на самоанализ, нет языка описания реальности') }}
+    {{ role_row('Финансы:', 'Рынок городских данных не сформирован') }}
+    <div style="background:#eff6ff; border-left:3px solid #3b82f6; padding:8px 12px; margin-top:8px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Что болит? Что не работает? Какие симптомы? Какие данные есть или нужны? Что жители говорят, если спросить?
+    </div>
+  </div>
+
+  <!-- Решатели -->
+  <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+    <div class="card-title" style="font-size:14px; margin-bottom:8px;">
+      <span class="badge badge-purple">Решатели</span>
+    </div>
+    <p style="font-size:13.5px; margin-bottom:6px;"><strong>Решатели придумывают новые проекты и продукты для решения проблем.</strong></p>
+    {{ role_row('Создают:', 'Решения, технологии, модели, школы, стили, оргсхемы') }}
+    {{ role_row('Субъекты:', 'Дизайнеры, методологи, инженеры, креаторы, IT') }}
+    {{ role_row('Институции:', 'Дизайн-студии, IT, инжиниринг, R&D') }}
+    {{ role_row('Ресурсы:', 'Локальные смыслы + ТЗ + творческий метод') }}
+    {{ role_row('Механизм:', 'Вдохновение культурой → синтез → решение. Не копирование') }}
+    {{ role_row('Проблема:', 'Сами пишут ТЗ, копируют. Скатились в производство') }}
+    {{ role_row('Финансы:', 'Ядро экономики. Должны заказывать исследования') }}
+    <div style="background:#f5f3ff; border-left:3px solid #8b5cf6; padding:8px 12px; margin-top:8px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Какие решения уже есть на рынке для этих проблем? Какие технологии можно создать? Что можно сделать уникального?
+    </div>
+  </div>
+
+  <!-- Делатели -->
+  <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+    <div class="card-title" style="font-size:14px; margin-bottom:8px;">
+      <span class="badge badge-orange">Делатели</span>
+    </div>
+    <p style="font-size:13.5px; margin-bottom:6px;"><strong>Делатели находят технологии и ресурсы, чтобы выпустить продукт, реализовать проект.</strong></p>
+    {{ role_row('Создают:', 'Продукты, услуги, товары') }}
+    {{ role_row('Субъекты:', 'Производители, сервис, фрилансеры, ремесленники') }}
+    {{ role_row('Институции:', 'Фабрики, мастерские, цеха, общепит') }}
+    {{ role_row('Ресурсы:', 'Линии, рецептуры, лекала, оборудование') }}
+    {{ role_row('Механизм:', 'Производство + продажа. Готовые технологии → конкуренция ценой') }}
+    {{ role_row('Проблема:', 'Не заказывают НИОКР, типовые линии') }}
+    {{ role_row('Финансы:', 'При деньгах, но тратят на перевооружение') }}
+    <div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:8px 12px; margin-top:8px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Что можно произвести с доступными ресурсами? Какие мощности есть? Что мешает производить уникальное? Чьи технологии используем?
+    </div>
+  </div>
+
+  <!-- Экспортеры -->
+  <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+    <div class="card-title" style="font-size:14px; margin-bottom:8px;">
+      <span class="badge badge-red">Экспортеры</span>
+    </div>
+    <p style="font-size:13.5px; margin-bottom:6px;"><strong>Экспортеры владеют информацией о том, какие проекты и продукты продаются на внешнем рынке — в других городах и странах.</strong></p>
+    {{ role_row('Создают:', 'Трафик, каналы, потоки') }}
+    {{ role_row('Субъекты:', 'Рестораторы, отельеры, медиа, университеты, аэропорты') }}
+    {{ role_row('Институции:', 'Гостиницы, аэропорты, медиа, площадки') }}
+    {{ role_row('Ресурсы:', 'Туристы, студенты, земляки, мемы') }}
+    {{ role_row('Механизм:', 'Замыкают потоки на себя, клонируют себе подобных') }}
+    {{ role_row('Проблема:', 'Нет коллабораций, нет диверсификации') }}
+    {{ role_row('Финансы:', 'При деньгах. Не инвестируют в экосистему') }}
+    <div style="background:#fff1f2; border-left:3px solid #ef4444; padding:8px 12px; margin-top:8px; border-radius:0 6px 6px 0; font-size:13.5px;">
+      <strong>Вопросы:</strong> Какие потоки проходят через территорию? Кто приезжает, уезжает? Какие каналы есть? Кому за пределами это может быть нужно?
+    </div>
+  </div>
+
+  <!-- 3 продюсерские роли -->
+  <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:16px; margin-top:4px;">
+    <p style="font-size:13px; color:var(--muted); margin-bottom:4px; font-weight:600;">3 продюсерские роли</p>
+    <p style="font-size:13.5px; color:#475569; margin-bottom:16px;">
+      Если команда большая — распределены по разным людям. Если компактная — могут быть объединены в одной роли продюсера.
+    </p>
+
+    {% macro prod_role_info(title, you, strength, want, fear, last=false) %}
+    <div style="{% if not last %}margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border);{% endif %}">
+      <div style="font-weight:600; font-size:14px; color:#1e293b; margin-bottom:6px;">{{ title }}</div>
+      <p style="font-size:13.5px; margin:3px 0;"><strong style="color:#1e293b;">Вы:</strong> {{ you }}</p>
+      <p style="font-size:13.5px; margin:3px 0;"><strong style="color:#1e293b;">Ваша сила:</strong> {{ strength }}</p>
+      <p style="font-size:13.5px; margin:3px 0;"><strong style="color:#1e293b;">Вы хотите:</strong> {{ want }}</p>
+      <p style="font-size:13.5px; margin:3px 0;"><strong style="color:#dc2626;">Вы боитесь:</strong> {{ fear }}</p>
+    </div>
+    {% endmacro %}
+
+    {{ prod_role_info(
+      'Куратор стратегии',
+      'Вы не принадлежите ни одной группе. Вы видите общую картину и выбираете вектор.',
+      'Без вас все тянут в разные стороны. Вы даёте направление.',
+      'Чтобы вектор был выбран осознанно, на основе данных и смыслов, а не по инерции.',
+      'Вас проигнорируют. Сильная группа навяжет свой вектор.'
+    ) }}
+
+    {{ prod_role_info(
+      'Продюсер-модератор',
+      'Вы — главное действующее лицо игры. Вы собираете кооперацию из людей, которые не хотят сотрудничать.',
+      'Без вас группы не договорятся. Вы — клей.',
+      'Чтобы все вошли в проект со своей выгодой. Работающую схему, а не красивый план.',
+      'Кто-то откажется. Обещания невозможно выполнить. Модель рассыплется.'
+    ) }}
+
+    {{ prod_role_info(
+      'Методолог-маркетолог',
+      'Вы видите то, чего не видят другие: сверхрынок. Вы понимаете, что на самом деле создано.',
+      'Без вас продадут сырьё вместо технологии. Вы — глаза вовне.',
+      'Чтобы экспортировали технологию и культуру, а не продукт.',
+      'Команда не поверит, что их решение стоит дороже, чем они думают.',
+      last=true
+    ) }}
+  </div>
+</div>
+
 <div class="card" style="background:#f8fafc; border-color:#cbd5e1;">
   <div class="card-title" style="font-size:14px; color:var(--muted);">Об игре</div>
   <p style="font-size:14px; line-height:1.7; margin-top:8px; color:#334155;">
