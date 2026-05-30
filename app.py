@@ -184,6 +184,17 @@ def load_game(game_id):
     return redirect(url_for('round1'))
 
 
+@app.route('/games/<game_id>/delete', methods=['POST'])
+@login_required
+def delete_game(game_id):
+    if request.form.get('admin_password') != ADMIN_PASSWORD:
+        return redirect(url_for('games', error='wrong_delete_code'))
+    supabase.table('games').delete().eq('id', game_id).execute()
+    if session.get('current_game_id') == game_id:
+        session.pop('current_game_id', None)
+    return redirect(url_for('games'))
+
+
 @app.route('/game-info')
 @login_required
 def game_info():
