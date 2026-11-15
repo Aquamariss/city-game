@@ -5,37 +5,50 @@
 <div class="page-title">Раунд 3 · ТЗ городских изменений</div>
 <div class="page-subtitle">Каждая команда формулирует своё техническое задание. Финальное ТЗ — общее.</div>
 
-{% set sections = [
-  ('gen',  'Генераторы',       'badge-green'),
-  ('prob', 'Проблематизаторы', 'badge-blue'),
-  ('sol',  'Решатели',         'badge-purple'),
-  ('mak',  'Делатели',         'badge-orange'),
-  ('exp',  'Экспортеры',       'badge-red'),
-  ('fin',  'Финальное ТЗ',     'badge-blue'),
-] %}
+<div class="card" style="background:#f0f9ff; border-color:#7dd3fc; border-left:4px solid #0ea5e9;">
+  <div style="font-size:15px; line-height:1.7; color:#1e293b;">
+    На этом этапе мы выбираем, как именно будем решать одну или несколько болей территории с опорой на культурные коды. Какой продукт мы хотим создать — сразу думаем о том, как он будет работать, развиваться и распространяться.
+  </div>
+  <div style="margin-top:10px; font-size:14px; color:#475569; line-height:1.6; border-top:1px solid #bae6fd; padding-top:10px;">
+    Обсуждают все, конечное слово — за продюсером.
+  </div>
+</div>
 
-{% set questions = [
-  ('q1', 'Какую проблему решаем?'),
-  ('q2', 'Для кого?'),
-  ('q3', 'С опорой на какие смыслы?'),
-  ('q4', 'Как поймём, что получилось?'),
-  ('q5', 'Ограничения?'),
-] %}
+<!-- Продукт, Городской проект -->
+<div class="card accent-r3">
+  <div class="card-title">Продукт, Городской проект</div>
+  <div class="field-group">
+    <textarea rows="5" data-field="r3_product" id="field-r3_product"
+              placeholder="Какой проект реализуем, продукт создадим">{{ data.get('r3_product', '') }}</textarea>
+  </div>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r3_product', document.getElementById('field-r3_product').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
 
-{% for sec, sec_name, badge_class in sections %}
-{% if sec == 'fin' %}
+<!-- Финальное ТЗ -->
 <div style="display:flex; justify-content:flex-end; margin-bottom:4px;">
   <a href="{{ url_for('print_r3_final') }}" target="_blank"
      class="btn btn-outline btn-sm">⬇ Скачать PDF — Финальное ТЗ</a>
 </div>
-{% endif %}
 <div class="card accent-r3">
   <div class="card-title">
-    <span class="badge {{ badge_class }}">{{ sec_name }}</span>
+    <span class="badge badge-blue">Финальное ТЗ</span>
   </div>
 
-  {% for q, q_label in questions %}
-  {% set key = 'r3_' + sec + '_' + q %}
+  {% set fin_questions = [
+    ('q1', 'Какую проблему решаем?'),
+    ('q2', 'Для кого?'),
+    ('q3', 'С опорой на какие смыслы?'),
+    ('q4', 'Какое городское изменение ожидаем? Как поймём, что получилось?'),
+    ('q5', 'Ограничения?'),
+  ] %}
+
+  {% for q, q_label in fin_questions %}
+  {% set key = 'r3_fin_' + q %}
   <div class="field-group">
     <label class="field-label">{{ q_label }}</label>
     <textarea rows="3" data-field="{{ key }}" id="field-{{ key }}"
@@ -45,22 +58,7 @@
 
   <div class="save-row">
     <button class="btn btn-primary btn-sm"
-            onclick="saveSection('{{ sec }}', this)">
-      Записать
-    </button>
-  </div>
-</div>
-{% endfor %}
-
-<div class="card accent-r3">
-  <div class="card-title">Продукт</div>
-  <div class="field-group">
-    <textarea rows="5" data-field="r3_product" id="field-r3_product"
-              placeholder="Как именно будем решать проблему, какой проект реализуем, продукт создадим">{{ data.get('r3_product', '') }}</textarea>
-  </div>
-  <div class="save-row">
-    <button class="btn btn-primary btn-sm"
-            onclick="saveField('r3_product', document.getElementById('field-r3_product').value, this)">
+            onclick="saveSection('fin', this)">
       Записать
     </button>
   </div>
