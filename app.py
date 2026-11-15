@@ -224,7 +224,14 @@ def round6():
 @game_required
 def round7():
     game = get_current_game()
-    return render_template('round7.html', game=game)
+    return render_template('checklist.html', game=game, data=game.get('data', {}))
+
+
+@app.route('/round/8')
+@game_required
+def round8():
+    game = get_current_game()
+    return render_template('round8.html', game=game)
 
 
 # ── API ───────────────────────────────────────────────────────────────────────
@@ -260,8 +267,7 @@ def _risks_json():
 @app.route('/checklist')
 @game_required
 def checklist():
-    game = get_current_game()
-    return render_template('checklist.html', game=game, data=game.get('data', {}))
+    return redirect(url_for('round7'))
 
 
 @app.route('/print/r3-final')

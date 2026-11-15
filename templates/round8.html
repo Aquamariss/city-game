@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Раунд 8 · Итог{% endblock %}
+
+{% block content %}
+<div class="page-title">Раунд 8 · Итог</div>
+<div class="page-subtitle">Вопросы для рефлексии по итогам игры.</div>
+
+<div class="card accent-r7">
+  <div class="card-title">1. Продюсеру</div>
+  <ul class="reflection-list" style="margin-top:12px;">
+    <li>Удалось ли вам услышать каждую роль — и дать ей голос в общем результате?</li>
+    <li>Как вы принимали решение, чью позицию поддержать в момент конфликта интересов?</li>
+    <li>Удалось ли собрать кооперацию так, чтобы каждый участник вошёл в проект со своей выгодой?</li>
+    <li>Что в получившейся бизнес-модели кажется наиболее уязвимым?</li>
+  </ul>
+</div>
+
+<div class="card accent-r7">
+  <div class="card-title">2. Участникам</div>
+  <ul class="reflection-list" style="margin-top:12px;">
+    <li>Насколько ваша роль была услышана продюсером — и другими участниками?</li>
+    <li>Что вы открыли в своём городе, исследуя его через свою роль?</li>
+    <li>Что из вашего опыта было близким к игровым ситуациям?</li>
+    <li>Какие из ролей вы наблюдаете реже всего в ваших проектах?</li>
+    <li>Что вы начнёте делать иначе в своих реальных проектах?</li>
+    <li>Какие ещё роли вам хотелось занять в процессе игры?</li>
+  </ul>
+</div>
+
+<div class="card accent-r7">
+  <div class="card-title">3. Модератору игры</div>
+  <ul class="reflection-list" style="margin-top:12px;">
+    <li>Как изменились участники игры в её процессе?</li>
+    <li>Что получилось? Что не получилось?</li>
+  </ul>
+</div>
+
+<div class="card" style="background:#f0fdf4; border-color:#86efac;">
+  <div class="card-title" style="color:#15803d;">🎉 Игра завершена</div>
+  <p style="margin-top:8px; color:#166534; font-size:14px;">
+    Результаты сохранены в базе данных. Вы можете вернуться к любому раунду или начать новую игру.
+  </p>
+  <div style="margin-top:16px; display:flex; gap:12px;">
+    <a href="{{ url_for('round7') }}" class="btn btn-outline btn-sm">← Раунд 7</a>
+    <form method="POST" action="{{ url_for('new_game') }}">
+      <button type="submit" class="btn btn-primary btn-sm">Новая игра</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
