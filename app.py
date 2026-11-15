@@ -206,18 +206,18 @@ def round4():
 @game_required
 def round5():
     game = get_current_game()
-    data = game.get('data', {})
-    risk_num = data.get('r5_risk')
-    risk = RISKS.get(int(risk_num)) if risk_num else None
-    return render_template('round5.html', game=game, data=data,
-                           risk=risk, risks_json=_risks_json())
+    return render_template('round5.html', game=game, data=game.get('data', {}))
 
 
 @app.route('/round/6')
 @game_required
 def round6():
     game = get_current_game()
-    return render_template('round6.html', game=game, data=game.get('data', {}))
+    data = game.get('data', {})
+    risk_num = data.get('r5_risk')
+    risk = RISKS.get(int(risk_num)) if risk_num else None
+    return render_template('round6.html', game=game, data=data,
+                           risk=risk, risks_json=_risks_json())
 
 
 @app.route('/round/7')

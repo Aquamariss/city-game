@@ -1,85 +1,92 @@
 {% extends "base.html" %}
-{% block title %}Раунд 5 · Риски{% endblock %}
+{% block title %}Раунд 5 · Бизнес-модель{% endblock %}
 
 {% block content %}
-<div class="page-title">Раунд 5 · Риски</div>
-<div class="page-subtitle">Ведущий вводит номер риска — все участники видят его текст.</div>
-
-<div class="card accent-r5">
-  <div class="card-title">Выбор риска</div>
-  <div class="card-desc">Введите номер от 1 до 8 и нажмите «Показать риск».</div>
-
-  <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-    <div>
-      <label class="field-label">Риск №</label>
-      <input type="number" id="risk-input" data-field="r5_risk"
-             min="1" max="8" style="width:100px;"
-             value="{{ data.get('r5_risk', '') }}"
-             placeholder="1–8">
-    </div>
-    <div style="margin-top:18px;">
-      <button class="btn btn-primary" onclick="confirmRisk(this)">
-        Показать риск
-      </button>
-    </div>
+<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:4px;">
+  <div>
+    <div class="page-title">Раунд 5 · Бизнес-модель проекта</div>
+    <div class="page-subtitle">Заполняйте поля — все участники видят изменения при обновлении страницы.</div>
   </div>
+  <a href="{{ url_for('print_r6') }}" target="_blank" class="btn btn-outline btn-sm">
+    ⬇ Скачать PDF
+  </a>
+</div>
 
-  <div id="risk-display" {% if not risk %}style="display:none"{% endif %}>
-    <div class="risk-card">
-      <div class="risk-title" id="risk-title">
-        {% if risk %}{{ risk[0] }}{% endif %}
-      </div>
-      <div class="risk-text" id="risk-text">
-        {% if risk %}{{ risk[1] }}{% endif %}
-      </div>
-    </div>
+<div class="card" style="background:#f0f9ff; border-color:#7dd3fc; border-left:4px solid #0ea5e9;">
+  <div style="font-size:15px; line-height:1.7; color:#1e293b;">
+    На этом этапе важно обозначить контуры бизнес-модели для дальнейшей проработки. Подробнее бизнес-модель разбирается в курсе.
   </div>
 </div>
 
-<div class="card accent-r5">
-  <div class="card-title">План реагирования</div>
-  <div class="card-desc">Запишите решение команды — поле сохраняется для всех участников и не сбрасывается при смене риска.</div>
-  <textarea rows="6" data-field="r5_response_plan" id="field-r5_response_plan"
-            placeholder="Как команда планирует реагировать на риски?">{{ data.get('r5_response_plan', '') }}</textarea>
+<div class="card accent-r6">
+  <div class="card-title">Технология создания и развития проекта</div>
+  <div class="card-desc">Как создаём проект? Как превращаем его в устойчивый продукт для города? Что будем готовы тиражировать?</div>
+  <textarea rows="3" data-field="r6_tech" id="field-r6_tech"
+            placeholder="Как создаём проект? Как превращаем его в устойчивый продукт для города? Что будем готовы тиражировать?">{{ data.get('r6_tech', '') }}</textarea>
   <div class="save-row">
     <button class="btn btn-primary btn-sm"
-            onclick="saveField('r5_response_plan', document.getElementById('field-r5_response_plan').value, this)">
+            onclick="saveField('r6_tech', document.getElementById('field-r6_tech').value, this)">
       Записать
     </button>
   </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
-<script>
-const RISKS = {{ risks_json | tojson }};
+<div class="card accent-r6">
+  <div class="card-title">Экспорт</div>
+  <div class="card-desc">Что можем экспортировать на другие ниши и территории? Методологию, технологию, культуру? Через какие каналы и партнёров?</div>
+  <textarea rows="3" data-field="r6_export" id="field-r6_export"
+            placeholder="Что можем экспортировать на другие ниши и территории? Методологию, технологию, культуру? Через какие каналы и партнёров?">{{ data.get('r6_export', '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r6_export', document.getElementById('field-r6_export').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
 
-async function confirmRisk(btn) {
-  const val = parseInt(document.getElementById('risk-input').value);
-  if (!val || val < 1 || val > 8) {
-    alert('Введите число от 1 до 8');
-    return;
-  }
-  await saveField('r5_risk', val, btn);
-  showRisk(val);
-}
+<div class="card accent-r6">
+  <div class="card-title">Целевые аудитории</div>
+  <div class="card-desc">Основные сегменты пользователей для городского проекта.</div>
+  <textarea rows="3" data-field="r6_audience" id="field-r6_audience"
+            placeholder="Основные сегменты пользователей для городского проекта">{{ data.get('r6_audience', '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r6_audience', document.getElementById('field-r6_audience').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
 
-function showRisk(num) {
-  const r = RISKS[String(num)];
-  if (!r) return;
-  document.getElementById('risk-title').textContent = r.title;
-  document.getElementById('risk-text').textContent  = r.text;
-  document.getElementById('risk-display').style.display = 'block';
-}
+<div class="card accent-r6">
+  <div class="card-title">Экономика</div>
+  <div class="field-group">
+    <label class="field-label">Доходы</label>
+    <textarea rows="3" data-field="r6_income" id="field-r6_income"
+              placeholder="Основные источники и способы дохода">{{ data.get('r6_income', '') }}</textarea>
+  </div>
+  <div class="field-group">
+    <label class="field-label">Расходы</label>
+    <textarea rows="3" data-field="r6_expenses" id="field-r6_expenses"
+              placeholder="Основные статьи затрат">{{ data.get('r6_expenses', '') }}</textarea>
+  </div>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveFields({'r6_income': document.getElementById('field-r6_income').value, 'r6_expenses': document.getElementById('field-r6_expenses').value}, this)">
+      Записать
+    </button>
+  </div>
+</div>
 
-window.onPollUpdate = function(data) {
-  if (data.r5_risk) {
-    const input = document.getElementById('risk-input');
-    if (document.activeElement !== input) {
-      input.value = data.r5_risk;
-    }
-    showRisk(data.r5_risk);
-  }
-};
-</script>
+<div class="card accent-r6">
+  <div class="card-title">Финальный питч</div>
+  <div class="card-desc">Мы решаем проблему А территории Б, путём создания С. Уникальность и преимущества заключаются в Д, экономика и устойчивость обеспечиваются за счёт Е.</div>
+  <textarea rows="3" data-field="r6_pitch" id="field-r6_pitch"
+            placeholder="Мы решаем проблему А территории Б, путём создания С. Уникальность и преимущества заключаются в Д, экономика и устойчивость обеспечиваются за счёт Е.">{{ data.get('r6_pitch', '') }}</textarea>
+  <div class="save-row">
+    <button class="btn btn-primary btn-sm"
+            onclick="saveField('r6_pitch', document.getElementById('field-r6_pitch').value, this)">
+      Записать
+    </button>
+  </div>
+</div>
 {% endblock %}

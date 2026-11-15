@@ -35,13 +35,12 @@
 <div class="meta">{{ game.name }}</div>
 
 {% set fields = [
-  ('r6_territory', 'Территория',  false),
-  ('r6_tz',        'ТЗ',          false),
-  ('r6_hypotheses','Гипотезы',    false),
-  ('r6_coop',      'Кооперация',  false),
-  ('r6_tech',      'Технология',  false),
-  ('r6_export',    'Экспорт',     false),
-  ('r6_pitch',     'Финальный питч', true),
+  ('r6_tech',     'Технология создания и развития проекта', false),
+  ('r6_export',   'Экспорт',                               false),
+  ('r6_audience', 'Целевые аудитории',                     false),
+  ('r6_income',   'Доходы',                                false),
+  ('r6_expenses', 'Расходы',                               false),
+  ('r6_pitch',    'Финальный питч',                        true),
 ] %}
 
 {% for key, label, is_pitch in fields %}
