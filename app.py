@@ -13,9 +13,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-producti
 
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
-GAME_PASSWORD  = os.environ.get('GAME_PASSWORD',  '3005')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '2222')
-MAX_GAMES = 4
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -121,8 +119,8 @@ def logout():
 def games():
     result = (supabase.table('games')
               .select('id, name, created_at')
+              .eq('is_visible', 1)
               .order('created_at', desc=True)
-              .limit(MAX_GAMES)
               .execute())
     games_list = result.data or []
     return render_template('games.html',
@@ -136,25 +134,22 @@ def new_game():
         return redirect(url_for('games', error='wrong_code'))
 
     name = 'Игра ' + datetime.now().strftime('%d.%m.%Y %H:%M')
-    result = supabase.table('games').insert({'name': name, 'data': {}}).execute()
+    result = supabase.table('games').insert({'name': name, 'data': {}, 'is_visible': 1}).execute()
     new_id = result.data[0]['id']
     session['current_game_id'] = new_id
-
-    # Keep only MAX_GAMES latest games
-    all_games = (supabase.table('games')
-                 .select('id')
-                 .order('created_at', desc=True)
-                 .execute())
-    ids = [g['id'] for g in all_games.data]
-    for old_id in ids[MAX_GAMES:]:
-        supabase.table('games').delete().eq('id', old_id).execute()
 
     return redirect(url_for('game_info'))
 
 
 @app.route('/games/<game_id>/load', methods=['POST'])
 def load_game(game_id):
-    if request.form.get('game_password') != GAME_PASSWORD:
+    result = supabase.table('games').select('name').eq('id', game_id).limit(1).execute()
+    if not result.data:
+        return redirect(url_for('games', error='wrong_game_code'))
+    game_name = result.data[0]['name']
+    m = re.match(r'Игра (\d{2})\.(\d{2})\.\d{4}', game_name)
+    expected_code = (m.group(1) + m.group(2)) if m else None
+    if not expected_code or request.form.get('game_password') != expected_code:
         return redirect(url_for('games', error='wrong_game_code'))
     session['current_game_id'] = game_id
     return redirect(url_for('round1'))
