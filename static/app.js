@@ -235,7 +235,11 @@ function makeDynamicList(containerId, fieldKey, maxItems) {
       }
     });
 
-    div.append(ta, vi, saveBtn, delBtn);
+    const actionsRow = document.createElement('div');
+    actionsRow.className = 'list-item-actions';
+    actionsRow.append(vi, saveBtn, delBtn);
+
+    div.append(ta, actionsRow);
     container.appendChild(div);
     if (focusIt) ta.focus();
   }
