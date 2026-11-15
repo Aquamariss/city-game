@@ -74,36 +74,6 @@
   </div>
 </div>
 
-<!-- Видения Раунда 1 -->
-<div class="card" style="background:#fafafa; border-color:#e2e8f0;">
-  <div class="card-title" style="color:var(--muted); font-size:14px;">Видения участников · Раунд 1</div>
-  <div class="card-desc" style="font-size:13px; color:var(--muted); margin-bottom:16px;">
-    Исходные видения каждой роли для опоры при формулировке кодов и болей.
-  </div>
-
-  {% set r1_blocks = [
-    ('Генераторы · Смыслы',              data.get('r1_gen',  '')),
-    ('Проблематизаторы · Проблемы',      data.get('r1_prob', '')),
-    ('Решатели · Решения и проекты',     data.get('r1_sol',  '')),
-    ('Делатели · Производство',          data.get('r1_mak',  '')),
-    ('Экспортеры · Экспортные услуги',   data.get('r1_exp',  '')),
-  ] %}
-
-  {% for title, text in r1_blocks %}
-  {% if text %}
-  <div style="margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
-    <div style="font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:.04em; margin-bottom:5px;">
-      {{ title }}
-    </div>
-    <div style="font-size:14px; color:#1e293b; white-space:pre-wrap; line-height:1.6;">{{ text }}</div>
-  </div>
-  {% endif %}
-  {% endfor %}
-
-  {% if not (data.get('r1_gen') or data.get('r1_prob') or data.get('r1_sol') or data.get('r1_mak') or data.get('r1_exp')) %}
-  <p style="color:var(--muted); font-size:14px;">Данные Раунда 1 ещё не заполнены.</p>
-  {% endif %}
-</div>
 {% endblock %}
 
 {% block scripts %}
